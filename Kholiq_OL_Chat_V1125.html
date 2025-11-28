@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Featured Message - Minimal Modern</title>
     <link rel="preload" href="https://socialstream.ninja/thirdparty/NotoColorEmoji.ttf" as="font" type="font/ttf" crossorigin="anonymous">
+    <audio id="notifSound" src="https://kholiqakbar30-arch.github.io/Content_Creator/the-message-came-from-vkontakte.mp3"></audio>
     <style>
         @font-face {
             font-family: NotoColorEmojiLimited;
@@ -565,7 +566,11 @@
                 requestAnimationFrame(() => {
                     wrapper.classList.add('show');
                 });
-
+                // Play notifikasi
+                const snd = document.getElementById("notifSound");
+                snd.currentTime = 0;
+                snd.play().catch(e => {});
+                
                 currentMessage = wrapper;
 
                 // TTS support
@@ -620,5 +625,22 @@
         // Initialize
         createIframe();
     </script>
+
+    <script>
+    function playNotif() {
+        const audio = document.getElementById("notifSound");
+        audio.currentTime = 0;
+        audio.play();
+    }
+    
+    window.addEventListener("message", (event) => {
+        // SSN mengirim pesan chat dalam event.data.type === "message"
+        if (event.data && event.data.type === "message") {
+            playNotif();
+        }
+    });
+    </script>
+
 </body>
+
 </html>
