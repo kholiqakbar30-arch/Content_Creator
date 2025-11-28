@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Modern Chat Overlay</title>
+    <title>Modern SSN Chat Overlay</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@500;600;700&display=swap" rel="stylesheet">
@@ -187,42 +187,6 @@
             opacity: 0.7;
         }
 
-        /* FLOATING ELEMENTS */
-        .floating-emoji {
-            position: absolute;
-            font-size: 24px;
-            opacity: 0;
-            animation: floatUp 2s ease-out forwards;
-        }
-
-        @keyframes floatUp {
-            0% {
-                opacity: 0;
-                transform: translateY(0) scale(0.5);
-            }
-            50% {
-                opacity: 1;
-                transform: translateY(-20px) scale(1);
-            }
-            100% {
-                opacity: 0;
-                transform: translateY(-40px) scale(0.8);
-            }
-        }
-
-        /* PLATFORM VARIATIONS */
-        .message-card[data-platform="tiktok"]::before {
-            background: linear-gradient(90deg, #FF0050, #00F2EA, #FF0050);
-        }
-
-        .message-card[data-platform="youtube"]::before {
-            background: linear-gradient(90deg, #FF0000, #FF8A00, #FF0000);
-        }
-
-        .message-card[data-platform="twitch"]::before {
-            background: linear-gradient(90deg, #9146FF, #BF94FF, #9146FF);
-        }
-
         /* EXIT ANIMATION */
         .message-wrapper.hide {
             animation: smoothExit 0.4s cubic-bezier(0.55, 0.085, 0.68, 0.53) forwards;
@@ -237,6 +201,19 @@
                 opacity: 0;
                 transform: translateY(-20px) scale(0.95);
             }
+        }
+
+        /* PLATFORM VARIATIONS */
+        .message-card[data-platform="tiktok"]::before {
+            background: linear-gradient(90deg, #FF0050, #00F2EA, #FF0050);
+        }
+
+        .message-card[data-platform="youtube"]::before {
+            background: linear-gradient(90deg, #FF0000, #FF8A00, #FF0000);
+        }
+
+        .message-card[data-platform="twitch"]::before {
+            background: linear-gradient(90deg, #9146FF, #BF94FF, #9146FF);
         }
 
         /* RESPONSIVE */
@@ -263,101 +240,289 @@
                 font-size: 14px;
             }
         }
+
+        /* HIDDEN IFRAME FOR SSN CONNECTION */
+        #ssnFrame {
+            position: fixed;
+            width: 0;
+            height: 0;
+            border: none;
+            opacity: 0;
+            pointer-events: none;
+        }
     </style>
 </head>
 <body>
     <div id="container">
-        <div class="message-wrapper">
-            <div class="message-card" data-platform="tiktok">
-                <!-- User Info -->
-                <div class="user-info">
-                    <div class="avatar-container">
-                        <img src="https://i.pravatar.cc/150?img=32" alt="Avatar" class="avatar">
-                        <div class="online-indicator"></div>
-                    </div>
-                    <div class="user-details">
-                        <div class="username">
-                            <span>CreativeViewer</span>
-                            <div class="user-badges">
-                                <img src="https://cdn3.emoji.gg/emojis/7411-verified.png" alt="Verified" class="badge">
-                            </div>
-                        </div>
-                        <div class="user-tag">@creative_viewer_88</div>
-                    </div>
-                </div>
-                
-                <!-- Message Content -->
-                <div class="message-content">
-                    <div class="message-text">
-                        Love the stream! The overlay design looks absolutely stunning. The animations are so smooth and professional! 🔥✨
-                    </div>
-                    
-                    <!-- Message Stats -->
-                    <div class="message-stats">
-                        <div class="stat">
-                            <svg class="stat-icon" viewBox="0 0 24 24" fill="currentColor">
-                                <path d="M14 10H2v2h12v-2zm0-4H2v2h12V6zM2 16h8v-2H2v2zm19.5-4.5L23 13l-6.99 7-4.51-4.5L13 14l3.01 3 5.49-5.5z"/>
-                            </svg>
-                            <span>Liked</span>
-                        </div>
-                        <div class="stat">
-                            <svg class="stat-icon" viewBox="0 0 24 24" fill="currentColor">
-                                <path d="M21 6h-2v9H6v2c0 .55.45 1 1 1h11l4 4V7c0-.55-.45-1-1-1zm-4 6V3c0-.55-.45-1-1-1H3c-.55 0-1 .45-1 1v14l4-4h11c.55 0 1-.45 1-1z"/>
-                            </svg>
-                            <span>Replied</span>
-                        </div>
-                        <div class="stat">
-                            <svg class="stat-icon" viewBox="0 0 24 24" fill="currentColor">
-                                <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
-                            </svg>
-                            <span>Loved</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
+        <div id="output"></div>
     </div>
 
+    <!-- Hidden iframe for SSN connection -->
+    <iframe id="ssnFrame" src="about:blank"></iframe>
+
     <script>
-        // Add floating emojis for visual interest
-        function createFloatingEmoji() {
-            const emojis = ['✨', '🔥', '⭐', '💫', '🎯'];
-            const card = document.querySelector('.message-card');
-            
-            emojis.forEach((emoji, index) => {
-                setTimeout(() => {
-                    const floatingEmoji = document.createElement('div');
-                    floatingEmoji.className = 'floating-emoji';
-                    floatingEmoji.textContent = emoji;
-                    floatingEmoji.style.left = Math.random() * 80 + 10 + '%';
-                    floatingEmoji.style.animationDelay = (index * 0.2) + 's';
-                    card.appendChild(floatingEmoji);
-                    
-                    setTimeout(() => {
-                        floatingEmoji.remove();
-                    }, 2000);
-                }, index * 300);
+        // Configuration - SAME AS ORIGINAL SSN
+        const urlParams = new URLSearchParams(window.location.search);
+        const roomID = urlParams.get('session') || urlParams.get('room') || urlParams.get('roomid') || 'TESTROOM';
+        const password = urlParams.get('password') || urlParams.get('pass') || urlParams.get('pw') || "false";
+        const showtime = parseInt(urlParams.get('showtime') || urlParams.get('timer') || '8000');
+        const pseudodock = urlParams.has('autoshow');
+        
+        // State
+        let messageTimeout = null;
+        let currentMessage = null;
+
+        // Create VDO.Ninja iframe - SAME AS ORIGINAL
+        function createIframe() {
+            var iframe = document.getElementById("ssnFrame");
+
+            if (pseudodock) {
+                iframe.src = "https://vdo.socialstream.ninja/?ln&salt=vdo.ninja&password=" + password + "&push&notmobile&label=dock&vd=0&ad=0&novideo&noaudio&autostart&cleanoutput&room=" + roomID;
+            } else {
+                iframe.src = "https://vdo.socialstream.ninja/?ln&password=" + password + "&notmobile&salt=vdo.ninja&label=overlay&exclude=" + roomID + "&scene&novideo&noaudio&cleanoutput&room=" + roomID;
+            }
+
+            var eventMethod = window.addEventListener ? "addEventListener" : "attachEvent";
+            var eventer = window[eventMethod];
+            var messageEvent = eventMethod === "attachEvent" ? "onmessage" : "message";
+
+            eventer(messageEvent, function (e) {
+                if (e.source != iframe.contentWindow) {
+                    return;
+                }
+                
+                if ("dataReceived" in e.data) {
+                    if ("overlayNinja" in e.data.dataReceived) {
+                        if (e.data.dataReceived.overlayNinja && "response" in e.data.dataReceived.overlayNinja) {
+                            return;
+                        } else {
+                            if (pseudodock && e.data.dataReceived.overlayNinja && !e.data.dataReceived.overlayNinja.contents) {
+                                processData({ contents: e.data.dataReceived.overlayNinja });
+                            } else {
+                                processData({ contents: e.data.dataReceived.overlayNinja });
+                            }
+                        }
+                    }
+                }
             });
         }
 
-        // Initialize floating emojis
-        setTimeout(createFloatingEmoji, 1000);
-        
-        // Auto-refresh demo (optional)
-        setInterval(() => {
-            createFloatingEmoji();
-        }, 5000);
+        // Process incoming messages - SAME LOGIC
+        function processData(data) {
+            if (!data || data === false) {
+                hideMessage();
+                return;
+            }
+            
+            if (data.contents === false) {
+                hideMessage();
+                return;
+            }
+            
+            if (data && data.contents) {
+                showMessage(data.contents);
+            } 
+            else if (data && "content" in data) {
+                if (data.content) {
+                    processData({ contents: data.content });
+                } else {
+                    hideMessage();
+                }
+            }
+            else if (data.action && "value" in data && data.action == "content") {
+                if (data.value) {
+                    try {
+                        const parsed = JSON.parse(data.value);
+                        if (parsed && "chatmessage" in parsed) {
+                            showMessage(parsed);
+                        }
+                    } catch (e) {
+                        console.error("Error parsing value:", e);
+                    }
+                } else {
+                    hideMessage();
+                }
+            }
+            else if (data && "chatmessage" in data) {
+                showMessage(data);
+            }
+        }
 
-        // Add hover effects
-        const messageCard = document.querySelector('.message-card');
-        messageCard.addEventListener('mouseenter', () => {
-            messageCard.style.transform = 'translateY(-4px)';
-            messageCard.style.transition = 'transform 0.3s ease';
-        });
-        
-        messageCard.addEventListener('mouseleave', () => {
-            messageCard.style.transform = 'translateY(0)';
-        });
+        // MODERN MESSAGE DISPLAY FUNCTION
+        function showMessage(content) {
+            if (!content.chatmessage && !content.chatname) return;
+
+            hideMessage(() => {
+                const wrapper = document.createElement('div');
+                wrapper.className = 'message-wrapper';
+                
+                const messageCard = document.createElement('div');
+                messageCard.className = 'message-card';
+                
+                // Set platform attribute for styling
+                if (content.type) {
+                    messageCard.setAttribute('data-platform', content.type);
+                }
+
+                // User Info Section
+                const userInfo = document.createElement('div');
+                userInfo.className = 'user-info';
+
+                // Avatar
+                if (content.chatimg) {
+                    const avatarContainer = document.createElement('div');
+                    avatarContainer.className = 'avatar-container';
+                    
+                    const avatar = document.createElement('img');
+                    avatar.className = 'avatar';
+                    avatar.src = content.chatimg;
+                    avatar.onerror = () => {
+                        avatar.src = 'https://i.pravatar.cc/150?img=32';
+                    };
+                    
+                    const onlineIndicator = document.createElement('div');
+                    onlineIndicator.className = 'online-indicator';
+                    
+                    avatarContainer.appendChild(avatar);
+                    avatarContainer.appendChild(onlineIndicator);
+                    userInfo.appendChild(avatarContainer);
+                }
+
+                // User Details
+                const userDetails = document.createElement('div');
+                userDetails.className = 'user-details';
+
+                // Username
+                const usernameDiv = document.createElement('div');
+                usernameDiv.className = 'username';
+                
+                if (content.chatname) {
+                    const name = document.createElement('span');
+                    name.textContent = content.chatname;
+                    if (content.nameColor) {
+                        name.style.color = content.nameColor;
+                    }
+                    usernameDiv.appendChild(name);
+                }
+
+                // Badges
+                if (content.chatbadges && Array.isArray(content.chatbadges)) {
+                    const badges = document.createElement('div');
+                    badges.className = 'user-badges';
+                    content.chatbadges.forEach(badge => {
+                        if (typeof badge === 'string') {
+                            const img = document.createElement('img');
+                            img.className = 'badge';
+                            img.src = badge;
+                            badges.appendChild(img);
+                        } else if (badge.src) {
+                            const img = document.createElement('img');
+                            img.className = 'badge';
+                            img.src = badge.src;
+                            badges.appendChild(img);
+                        }
+                    });
+                    usernameDiv.appendChild(badges);
+                }
+
+                userDetails.appendChild(usernameDiv);
+
+                // User Tag
+                const userTag = document.createElement('div');
+                userTag.className = 'user-tag';
+                userTag.textContent = content.type ? `via ${content.type.toUpperCase()}` : 'Live Viewer';
+                userDetails.appendChild(userTag);
+
+                userInfo.appendChild(userDetails);
+                messageCard.appendChild(userInfo);
+
+                // Message Content
+                const messageContent = document.createElement('div');
+                messageContent.className = 'message-content';
+
+                // Message Text
+                if (content.chatmessage) {
+                    const text = document.createElement('div');
+                    text.className = 'message-text';
+                    text.innerHTML = content.chatmessage;
+                    if (content.textColor) {
+                        text.style.color = content.textColor;
+                    }
+                    messageContent.appendChild(text);
+                }
+
+                // Message Stats
+                const messageStats = document.createElement('div');
+                messageStats.className = 'message-stats';
+                
+                const stats = [
+                    { icon: 'M14 10H2v2h12v-2zm0-4H2v2h12V6zM2 16h8v-2H2v2zm19.5-4.5L23 13l-6.99 7-4.51-4.5L13 14l3.01 3 5.49-5.5z', text: 'Liked' },
+                    { icon: 'M21 6h-2v9H6v2c0 .55.45 1 1 1h11l4 4V7c0-.55-.45-1-1-1zm-4 6V3c0-.55-.45-1-1-1H3c-.55 0-1 .45-1 1v14l4-4h11c.55 0 1-.45 1-1z', text: 'Replied' },
+                    { icon: 'M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z', text: 'Loved' }
+                ];
+
+                stats.forEach(stat => {
+                    const statDiv = document.createElement('div');
+                    statDiv.className = 'stat';
+                    
+                    const iconSvg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+                    iconSvg.setAttribute('viewBox', '0 0 24 24');
+                    iconSvg.setAttribute('fill', 'currentColor');
+                    iconSvg.classList.add('stat-icon');
+                    
+                    const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+                    path.setAttribute('d', stat.icon);
+                    iconSvg.appendChild(path);
+                    
+                    const textSpan = document.createElement('span');
+                    textSpan.textContent = stat.text;
+                    
+                    statDiv.appendChild(iconSvg);
+                    statDiv.appendChild(textSpan);
+                    messageStats.appendChild(statDiv);
+                });
+
+                messageContent.appendChild(messageStats);
+                messageCard.appendChild(messageContent);
+                wrapper.appendChild(messageCard);
+                
+                const output = document.getElementById('output');
+                output.innerHTML = '';
+                output.appendChild(wrapper);
+
+                currentMessage = wrapper;
+
+                // Auto-hide
+                if (messageTimeout) clearTimeout(messageTimeout);
+                messageTimeout = setTimeout(() => {
+                    hideMessage();
+                }, showtime);
+            });
+        }
+
+        // Hide message
+        function hideMessage(callback) {
+            if (messageTimeout) {
+                clearTimeout(messageTimeout);
+                messageTimeout = null;
+            }
+
+            if (currentMessage) {
+                currentMessage.classList.add('hide');
+                setTimeout(() => {
+                    if (currentMessage && currentMessage.parentNode) {
+                        currentMessage.parentNode.removeChild(currentMessage);
+                    }
+                    currentMessage = null;
+                    if (callback) callback();
+                }, 400);
+            } else if (callback) {
+                callback();
+            }
+        }
+
+        // Initialize
+        createIframe();
     </script>
 </body>
 </html>
