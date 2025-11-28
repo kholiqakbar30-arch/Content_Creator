@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Modern SSN Chat Overlay</title>
+    <title>Modern SSN Chat Overlay with Audio</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@500;600;700&display=swap" rel="stylesheet">
@@ -257,10 +257,60 @@
         <div id="output"></div>
     </div>
 
+    <!-- ✅ AUDIO ELEMENT YANG DITAMBAHKAN -->
+    <audio id="notifSound" preload="auto">
+        <source src="https://assets.mixkit.co/active_storage/sfx/286/286-preview.mp3" type="audio/mpeg">
+        <source src="https://assets.mixkit.co/active_storage/sfx/286/286.wav" type="audio/wav">
+    </audio>
+
     <!-- Hidden iframe for SSN connection -->
     <iframe id="ssnFrame" src="about:blank"></iframe>
 
     <script>
+        // ✅ AUDIO FIX: Enable audio on interaction
+        let audioEnabled = false;
+        
+        function enableAudio() {
+            if (!audioEnabled) {
+                audioEnabled = true;
+                console.log("🔊 Audio system enabled");
+                // Unlock audio context dengan silent play
+                const silentAudio = new Audio();
+                silentAudio.src = "data:audio/wav;base64,UklGRnoAAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQoAAAC";
+                silentAudio.play().then(() => {
+                    silentAudio.pause();
+                }).catch(e => console.log("Silent audio failed:", e));
+            }
+            return audioEnabled;
+        }
+
+        // ✅ NOTIFICATION FUNCTION YANG DITAMBAHKAN
+        function playNotif() {
+            if (!enableAudio()) {
+                console.log("⚠️ Audio not ready - need user interaction first");
+                return;
+            }
+            
+            const audio = document.getElementById("notifSound");
+            if (audio) {
+                audio.currentTime = 0;
+                audio.volume = 0.7; // Atur volume
+                audio.play().catch(e => {
+                    console.log("🎵 Main audio failed, using fallback:", e);
+                    // Emergency fallback
+                    const fallback = new Audio("https://assets.mixkit.co/active_storage/sfx/286/286-preview.mp3");
+                    fallback.volume = 0.7;
+                    fallback.play().catch(e2 => console.log("🚨 All audio methods failed"));
+                });
+            }
+        }
+
+        // Enable on any interaction
+        document.addEventListener('click', enableAudio);
+        document.addEventListener('touchstart', enableAudio);
+        document.addEventListener('keydown', enableAudio);
+        window.addEventListener('load', enableAudio);
+
         // Configuration - SAME AS ORIGINAL SSN
         const urlParams = new URLSearchParams(window.location.search);
         const roomID = urlParams.get('session') || urlParams.get('room') || urlParams.get('roomid') || 'TESTROOM';
@@ -348,7 +398,7 @@
             }
         }
 
-        // MODERN MESSAGE DISPLAY FUNCTION
+        // ✅ MODERN MESSAGE DISPLAY FUNCTION - DENGAN NOTIFIKASI AUDIO
         function showMessage(content) {
             if (!content.chatmessage && !content.chatname) return;
 
@@ -491,6 +541,9 @@
                 output.appendChild(wrapper);
 
                 currentMessage = wrapper;
+
+                // ✅ PLAY NOTIFICATION WHEN MESSAGE APPEARS
+                setTimeout(playNotif, 300);
 
                 // Auto-hide
                 if (messageTimeout) clearTimeout(messageTimeout);
