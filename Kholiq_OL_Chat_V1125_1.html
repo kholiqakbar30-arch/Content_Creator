@@ -1,0 +1,624 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Modern Chat Overlay</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="preload" href="https://socialstream.ninja/thirdparty/NotoColorEmoji.ttf" as="font" type="font/ttf" crossorigin="anonymous">
+    <audio id="notifSound" src="https://kholiqakbar30-arch.github.io/Content_Creator/the-message-came-from-vkontakte.mp3"></audio>
+    <style>
+        @font-face {
+            font-family: NotoColorEmojiLimited;
+            unicode-range: U+1F1E6-1F1FF;
+            src: url(https://socialstream.ninja/thirdparty/NotoColorEmoji.ttf);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif, 'NotoColorEmojiLimited';
+            background: transparent;
+            overflow: hidden;
+            width: 100vw;
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        #container {
+            width: 100%;
+            max-width: 500px;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        /* SMOOTH MODERN SLIDE ANIMATION */
+        .message-wrapper {
+            opacity: 0;
+            transform: translateX(-100px) scale(0.9);
+            transition: all 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+            width: 100%;
+        }
+
+        .message-wrapper.show {
+            opacity: 1;
+            transform: translateX(0) scale(1);
+        }
+
+        .message-wrapper.hide {
+            opacity: 0;
+            transform: translateX(100px) scale(0.9);
+            transition: all 0.5s cubic-bezier(0.6, -0.28, 0.735, 0.045);
+        }
+
+        /* MODERN SQUARE CARD STYLE */
+        .message {
+            background: linear-gradient(135deg, #2d2d2d 0%, #1a1a1a 100%);
+            border-radius: 20px;
+            padding: 24px;
+            box-shadow: 
+                0 10px 40px rgba(0, 0, 0, 0.6),
+                0 0 0 1px rgba(255, 255, 255, 0.1),
+                inset 0 1px 0 rgba(255, 255, 255, 0.1);
+            position: relative;
+            overflow: visible;
+            transition: all 0.3s ease;
+        }
+
+        .message::before {
+            content: '';
+            position: absolute;
+            top: -2px;
+            left: -2px;
+            right: -2px;
+            bottom: -2px;
+            background: linear-gradient(135deg, #ffd700 0%, #ff8c00 100%);
+            border-radius: 22px;
+            z-index: -1;
+            opacity: 0.6;
+            filter: blur(8px);
+        }
+
+        .message:hover {
+            transform: translateY(-3px);
+            box-shadow: 
+                0 15px 50px rgba(0, 0, 0, 0.7),
+                0 0 0 1px rgba(255, 255, 255, 0.15),
+                inset 0 1px 0 rgba(255, 255, 255, 0.15);
+        }
+
+        /* HEADER SECTION */
+        .message-header {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            margin-bottom: 16px;
+        }
+
+        /* AVATAR */
+        .avatar {
+            width: 64px;
+            height: 64px;
+            border-radius: 16px;
+            object-fit: cover;
+            flex-shrink: 0;
+            border: 3px solid rgba(255, 215, 0, 0.5);
+            box-shadow: 
+                0 4px 15px rgba(255, 215, 0, 0.3),
+                0 0 20px rgba(255, 215, 0, 0.2);
+            background: #1a1a1a;
+        }
+
+        /* USERNAME SECTION */
+        .user-info {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .username-row {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .username {
+            font-weight: 700;
+            font-size: 18px;
+            color: #ffffff;
+            text-shadow: 0 2px 8px rgba(0, 0, 0, 0.8);
+            letter-spacing: 0.3px;
+        }
+
+        .source-icon {
+            width: 20px;
+            height: 20px;
+            opacity: 0.9;
+            filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.5));
+        }
+
+        /* BADGES */
+        .badges {
+            display: inline-flex;
+            gap: 4px;
+            align-items: center;
+        }
+
+        .badge {
+            height: 20px;
+            width: auto;
+            opacity: 0.95;
+            filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.4));
+        }
+
+        /* MESSAGE BUBBLE */
+        .message-bubble {
+            background: linear-gradient(135deg, #ffe8a3 0%, #ffd96b 100%);
+            border-radius: 16px;
+            padding: 18px 20px;
+            position: relative;
+            box-shadow: 
+                0 4px 15px rgba(0, 0, 0, 0.3),
+                inset 0 1px 0 rgba(255, 255, 255, 0.4);
+        }
+
+        /* TAIL/POINTER */
+        .message-bubble::before {
+            content: '';
+            position: absolute;
+            top: -8px;
+            left: 30px;
+            width: 0;
+            height: 0;
+            border-left: 10px solid transparent;
+            border-right: 10px solid transparent;
+            border-bottom: 10px solid #ffe8a3;
+            filter: drop-shadow(0 -2px 3px rgba(0, 0, 0, 0.2));
+        }
+
+        /* MESSAGE TEXT */
+        .text {
+            font-size: 16px;
+            line-height: 1.6;
+            color: #1a1a1a;
+            word-wrap: break-word;
+            font-weight: 500;
+            letter-spacing: 0.2px;
+        }
+
+        /* Inline images/emotes */
+        .text img,
+        .text svg {
+            max-width: 28px;
+            max-height: 28px;
+            height: auto;
+            width: auto;
+            vertical-align: middle;
+            object-fit: contain;
+            margin: 0 2px;
+            display: inline-block;
+        }
+
+        /* DONATION/MEMBERSHIP */
+        .donation-info {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 8px 14px;
+            border-radius: 10px;
+            font-size: 13px;
+            font-weight: 600;
+            margin-top: 10px;
+            background: linear-gradient(135deg, rgba(255, 215, 0, 0.25), rgba(255, 140, 0, 0.25));
+            color: #1a1a1a;
+            border: 2px solid rgba(255, 215, 0, 0.4);
+            box-shadow: 0 2px 10px rgba(255, 215, 0, 0.3);
+        }
+
+        /* CONTENT IMAGE */
+        .content-image {
+            max-width: 100%;
+            max-height: 220px;
+            margin-top: 12px;
+            border-radius: 12px;
+            border: 2px solid rgba(255, 215, 0, 0.3);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+        }
+
+        /* PLATFORM COLORS */
+        .message[data-platform="youtube"] .avatar {
+            border-color: rgba(255, 0, 0, 0.6);
+            box-shadow: 
+                0 4px 15px rgba(255, 0, 0, 0.4),
+                0 0 20px rgba(255, 0, 0, 0.3);
+        }
+
+        .message[data-platform="youtube"]::before {
+            background: linear-gradient(135deg, #ff0000 0%, #cc0000 100%);
+        }
+
+        .message[data-platform="twitch"] .avatar {
+            border-color: rgba(145, 70, 255, 0.6);
+            box-shadow: 
+                0 4px 15px rgba(145, 70, 255, 0.4),
+                0 0 20px rgba(145, 70, 255, 0.3);
+        }
+
+        .message[data-platform="twitch"]::before {
+            background: linear-gradient(135deg, #9146ff 0%, #6c2dc7 100%);
+        }
+
+        .message[data-platform="facebook"] .avatar {
+            border-color: rgba(24, 119, 242, 0.6);
+            box-shadow: 
+                0 4px 15px rgba(24, 119, 242, 0.4),
+                0 0 20px rgba(24, 119, 242, 0.3);
+        }
+
+        .message[data-platform="facebook"]::before {
+            background: linear-gradient(135deg, #1877f2 0%, #0d5ebd 100%);
+        }
+
+        .message[data-platform="tiktok"] .avatar {
+            border-color: rgba(255, 0, 80, 0.6);
+            box-shadow: 
+                0 4px 15px rgba(255, 0, 80, 0.4),
+                0 0 20px rgba(255, 0, 80, 0.3);
+        }
+
+        .message[data-platform="tiktok"]::before {
+            background: linear-gradient(135deg, #ff0050 0%, #cc003d 100%);
+        }
+
+        .message[data-platform="kick"] .avatar {
+            border-color: rgba(83, 252, 24, 0.6);
+            box-shadow: 
+                0 4px 15px rgba(83, 252, 24, 0.4),
+                0 0 20px rgba(83, 252, 24, 0.3);
+        }
+
+        .message[data-platform="kick"]::before {
+            background: linear-gradient(135deg, #53fc18 0%, #3ec912 100%);
+        }
+
+        /* Hide empty elements */
+        .badges:empty,
+        .donation-info:empty {
+            display: none;
+        }
+
+        /* RESPONSIVE */
+        @media (max-width: 600px) {
+            .message {
+                padding: 20px;
+            }
+            
+            .avatar {
+                width: 56px;
+                height: 56px;
+            }
+            
+            .username {
+                font-size: 16px;
+            }
+            
+            .text {
+                font-size: 15px;
+            }
+
+            #container {
+                max-width: 90%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div id="container">
+        <div id="output"></div>
+    </div>
+
+    <script src="https://socialstream.ninja/tts.js"></script>
+    <script>
+        // Configuration
+        const urlParams = new URLSearchParams(window.location.search);
+        const roomID = urlParams.get('session') || urlParams.get('room') || urlParams.get('roomid') || 'TESTROOM';
+        const password = urlParams.get('password') || urlParams.get('pass') || urlParams.get('pw') || "false";
+        const showtime = parseInt(urlParams.get('showtime') || urlParams.get('timer') || '8000');
+        const pseudodock = urlParams.has('autoshow');
+        
+        let messageTimeout = null;
+        let currentMessage = null;
+
+        function createIframe() {
+            var iframe = document.createElement("iframe");
+
+            if (pseudodock) {
+                iframe.src = "https://vdo.socialstream.ninja/?ln&salt=vdo.ninja&password=" + password + "&push&notmobile&label=dock&vd=0&ad=0&novideo&noaudio&autostart&cleanoutput&room=" + roomID;
+            } else {
+                iframe.src = "https://vdo.socialstream.ninja/?ln&password=" + password + "&notmobile&salt=vdo.ninja&label=overlay&exclude=" + roomID + "&scene&novideo&noaudio&cleanoutput&room=" + roomID;
+            }
+            
+            iframe.style.width = "0px";
+            iframe.style.height = "0px";
+            iframe.style.position = "fixed";
+            iframe.style.left = "-100px";
+            iframe.style.top = "-100px";
+            iframe.id = "frame1";
+            iframe.allow = "midi;geolocation;microphone;";
+            document.body.appendChild(iframe);
+
+            var eventMethod = window.addEventListener ? "addEventListener" : "attachEvent";
+            var eventer = window[eventMethod];
+            var messageEvent = eventMethod === "attachEvent" ? "onmessage" : "message";
+
+            eventer(messageEvent, function (e) {
+                if (e.source != iframe.contentWindow) {
+                    return;
+                }
+                
+                if ("dataReceived" in e.data) {
+                    if ("overlayNinja" in e.data.dataReceived) {
+                        if (e.data.dataReceived.overlayNinja && "response" in e.data.dataReceived.overlayNinja) {
+                            return;
+                        } else {
+                            if (pseudodock && e.data.dataReceived.overlayNinja && !e.data.dataReceived.overlayNinja.contents) {
+                                processData({ contents: e.data.dataReceived.overlayNinja });
+                            } else {
+                                processData({ contents: e.data.dataReceived.overlayNinja });
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        function processData(data) {
+            if (!data || data === false) {
+                hideMessage();
+                return;
+            }
+            
+            if (data.contents === false) {
+                hideMessage();
+                return;
+            }
+            
+            if (data && data.contents) {
+                showMessage(data.contents);
+            } 
+            else if (data && "content" in data) {
+                if (data.content) {
+                    processData({ contents: data.content });
+                } else {
+                    hideMessage();
+                }
+            }
+            else if (data.action && "value" in data && data.action == "content") {
+                if (data.value) {
+                    try {
+                        const parsed = JSON.parse(data.value);
+                        if (parsed && "chatmessage" in parsed) {
+                            showMessage(parsed);
+                        }
+                    } catch (e) {
+                        console.error("Error parsing value:", e);
+                    }
+                } else {
+                    hideMessage();
+                }
+            }
+            else if (data && "chatmessage" in data) {
+                showMessage(data);
+            }
+        }
+
+        function showMessage(content) {
+            if (!content.chatmessage && !content.chatname) return;
+
+            hideMessage(() => {
+                const wrapper = document.createElement('div');
+                wrapper.className = 'message-wrapper';
+                
+                const message = document.createElement('div');
+                message.className = 'message';
+
+                if (content.type) {
+                    message.setAttribute('data-platform', content.type);
+                }
+
+                // Header
+                const header = document.createElement('div');
+                header.className = 'message-header';
+
+                // Avatar
+                if (content.chatimg) {
+                    const avatar = document.createElement('img');
+                    avatar.className = 'avatar';
+                    avatar.src = content.chatimg;
+                    avatar.onerror = () => {
+                        avatar.src = 'https://socialstream.ninja/sources/images/unknown.png';
+                    };
+                    header.appendChild(avatar);
+                }
+
+                // User info
+                const userInfo = document.createElement('div');
+                userInfo.className = 'user-info';
+
+                const usernameRow = document.createElement('div');
+                usernameRow.className = 'username-row';
+
+                if (content.chatname) {
+                    const name = document.createElement('span');
+                    name.className = 'username';
+                    name.innerHTML = content.chatname;
+                    if (content.nameColor) {
+                        name.style.color = content.nameColor;
+                    }
+                    usernameRow.appendChild(name);
+                }
+
+                if (content.type) {
+                    const sourceIcon = document.createElement('img');
+                    sourceIcon.className = 'source-icon';
+                    sourceIcon.src = `https://socialstream.ninja/sources/images/${content.type}.png`;
+                    sourceIcon.onerror = () => { sourceIcon.style.display = 'none'; };
+                    usernameRow.appendChild(sourceIcon);
+                }
+
+                if (content.chatbadges && Array.isArray(content.chatbadges)) {
+                    const badges = document.createElement('div');
+                    badges.className = 'badges';
+                    content.chatbadges.forEach(badge => {
+                        if (typeof badge === 'string') {
+                            const img = document.createElement('img');
+                            img.className = 'badge';
+                            img.src = badge;
+                            badges.appendChild(img);
+                        } else if (badge.src) {
+                            const img = document.createElement('img');
+                            img.className = 'badge';
+                            img.src = badge.src;
+                            badges.appendChild(img);
+                        } else if (badge.type === 'svg' && badge.html) {
+                            const span = document.createElement('span');
+                            span.className = 'badge svg';
+                            span.innerHTML = badge.html;
+                            badges.appendChild(span);
+                        }
+                    });
+                    usernameRow.appendChild(badges);
+                }
+
+                userInfo.appendChild(usernameRow);
+                header.appendChild(userInfo);
+                message.appendChild(header);
+
+                // Message bubble
+                const bubble = document.createElement('div');
+                bubble.className = 'message-bubble';
+
+                if (content.chatmessage) {
+                    const text = document.createElement('div');
+                    text.className = 'text';
+                    text.innerHTML = content.chatmessage;
+                    bubble.appendChild(text);
+                }
+
+                if (content.hasDonation || content.membership) {
+                    const donationDiv = document.createElement('div');
+                    donationDiv.className = 'donation-info';
+                    
+                    if (content.hasDonation) {
+                        donationDiv.textContent = content.title ? 
+                            `${content.title}: ${content.hasDonation}` : 
+                            content.hasDonation;
+                    } else if (content.membership) {
+                        donationDiv.textContent = typeof content.membership === 'string' ? 
+                            content.membership : 'Member';
+                    }
+                    
+                    bubble.appendChild(donationDiv);
+                }
+
+                if (content.contentimg) {
+                    const img = document.createElement('img');
+                    img.className = 'content-image';
+                    img.src = content.contentimg;
+                    img.onerror = () => { img.style.display = 'none'; };
+                    bubble.appendChild(img);
+                }
+
+                message.appendChild(bubble);
+                wrapper.appendChild(message);
+                
+                const output = document.getElementById('output');
+                output.innerHTML = '';
+                output.appendChild(wrapper);
+
+                requestAnimationFrame(() => {
+                    wrapper.classList.add('show');
+                });
+
+                const snd = document.getElementById("notifSound");
+                snd.currentTime = 0;
+                snd.play().catch(e => {});
+                
+                currentMessage = wrapper;
+
+                if (window.initTTS && urlParams.has('tts')) {
+                    const ttsText = content.chatmessage ? 
+                        content.chatmessage.replace(/<[^>]*>/g, '') : '';
+                    if (ttsText) {
+                        window.speak(content.chatname + ' says ' + ttsText);
+                    }
+                }
+
+                if (messageTimeout) clearTimeout(messageTimeout);
+                messageTimeout = setTimeout(() => {
+                    hideMessage();
+                }, showtime);
+            });
+        }
+
+        function hideMessage(callback) {
+            if (messageTimeout) {
+                clearTimeout(messageTimeout);
+                messageTimeout = null;
+            }
+
+            if (currentMessage) {
+                currentMessage.classList.remove('show');
+                currentMessage.classList.add('hide');
+                setTimeout(() => {
+                    if (currentMessage && currentMessage.parentNode) {
+                        currentMessage.parentNode.removeChild(currentMessage);
+                    }
+                    currentMessage = null;
+                    if (callback) callback();
+                }, 500);
+            } else if (callback) {
+                callback();
+            }
+        }
+
+        if (urlParams.has('tts') && window.initTTS) {
+            window.initTTS({
+                lang: urlParams.get('tts') || urlParams.get('lang') || 'en-US',
+                pitch: parseFloat(urlParams.get('pitch') || '1'),
+                rate: parseFloat(urlParams.get('rate') || '1'),
+                voice: urlParams.get('voice') || null
+            });
+        }
+
+        createIframe();
+    </script>
+
+    <script>
+    function playNotif() {
+        const audio = document.getElementById("notifSound");
+        audio.currentTime = 0;
+        audio.play();
+    }
+    
+    window.addEventListener("message", (event) => {
+        if (event.data && event.data.type === "message") {
+            playNotif();
+        }
+    });
+    </script>
+
+</body>
+</html>
