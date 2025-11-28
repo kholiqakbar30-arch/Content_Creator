@@ -1,0 +1,436 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Social Stream Ninja - Custom CSS</title>
+    <style>
+        /* =================================
+           CUSTOM CSS UNTUK SOCIAL STREAM NINJA
+           Copy CSS di bawah ini ke Custom CSS di Social Stream Ninja
+           ================================= */
+
+        /* Reset & Base */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: transparent !important;
+            overflow: hidden;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        /* Container untuk semua chat */
+        #messages {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            width: 400px;
+            max-height: 90vh;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            z-index: 9999;
+        }
+
+        /* Individual message container */
+        .message {
+            background: rgba(20, 20, 25, 0.95);
+            border-left: 4px solid #00f5ff;
+            border-radius: 12px;
+            padding: 16px;
+            box-shadow: 
+                0 4px 20px rgba(0, 0, 0, 0.4),
+                0 0 0 1px rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            animation: bounceIn 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+            transform-origin: right center;
+            transition: all 0.3s ease;
+        }
+
+        .message:hover {
+            transform: translateX(-8px) scale(1.02);
+            box-shadow: 
+                0 8px 30px rgba(0, 245, 255, 0.3),
+                0 0 0 1px rgba(0, 245, 255, 0.3);
+        }
+
+        /* Bounce in animation */
+        @keyframes bounceIn {
+            0% {
+                opacity: 0;
+                transform: translateX(100%) scale(0.3);
+            }
+            50% {
+                transform: translateX(-10px) scale(1.05);
+            }
+            70% {
+                transform: translateX(5px) scale(0.98);
+            }
+            100% {
+                opacity: 1;
+                transform: translateX(0) scale(1);
+            }
+        }
+
+        /* Fade out animation saat pesan hilang */
+        .message.fade-out {
+            animation: fadeOut 0.5s ease-out forwards;
+        }
+
+        @keyframes fadeOut {
+            to {
+                opacity: 0;
+                transform: translateX(50px) scale(0.8);
+            }
+        }
+
+        /* Header section (nama & platform) */
+        .message-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+
+        /* Avatar */
+        .avatar {
+            width: 42px;
+            height: 42px;
+            border-radius: 50%;
+            border: 2px solid #00f5ff;
+            object-fit: cover;
+            box-shadow: 0 0 10px rgba(0, 245, 255, 0.4);
+        }
+
+        /* Username */
+        .username {
+            font-size: 16px;
+            font-weight: 700;
+            color: #ffffff;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+            flex: 1;
+        }
+
+        /* Platform badge */
+        .platform {
+            font-size: 11px;
+            font-weight: 600;
+            padding: 4px 10px;
+            border-radius: 12px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: #ffffff;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            box-shadow: 0 2px 8px rgba(102, 126, 234, 0.3);
+        }
+
+        /* Platform-specific colors */
+        .platform.youtube {
+            background: linear-gradient(135deg, #ff0000 0%, #cc0000 100%);
+            box-shadow: 0 2px 8px rgba(255, 0, 0, 0.3);
+        }
+
+        .platform.twitch {
+            background: linear-gradient(135deg, #9146ff 0%, #6441a5 100%);
+            box-shadow: 0 2px 8px rgba(145, 70, 255, 0.3);
+        }
+
+        .platform.facebook {
+            background: linear-gradient(135deg, #1877f2 0%, #0e5bb5 100%);
+            box-shadow: 0 2px 8px rgba(24, 119, 242, 0.3);
+        }
+
+        .platform.tiktok {
+            background: linear-gradient(135deg, #ff0050 0%, #00f2ea 100%);
+            box-shadow: 0 2px 8px rgba(255, 0, 80, 0.3);
+        }
+
+        /* Message content */
+        .message-content {
+            font-size: 15px;
+            line-height: 1.5;
+            color: #e0e0e0;
+            word-wrap: break-word;
+            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+        }
+
+        /* Timestamp */
+        .timestamp {
+            font-size: 11px;
+            color: #888888;
+            margin-top: 8px;
+            text-align: right;
+            opacity: 0.7;
+        }
+
+        /* Verified badge */
+        .verified {
+            display: inline-block;
+            width: 16px;
+            height: 16px;
+            background: #00f5ff;
+            border-radius: 50%;
+            margin-left: 4px;
+            position: relative;
+        }
+
+        .verified::after {
+            content: "✓";
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: #000;
+            font-size: 11px;
+            font-weight: bold;
+        }
+
+        /* Highlighted messages (superchat, member, etc) */
+        .message.highlighted {
+            background: linear-gradient(135deg, 
+                rgba(255, 215, 0, 0.2) 0%, 
+                rgba(255, 140, 0, 0.2) 100%);
+            border-left-color: #ffd700;
+            border-left-width: 5px;
+        }
+
+        .message.highlighted:hover {
+            box-shadow: 
+                0 8px 30px rgba(255, 215, 0, 0.4),
+                0 0 0 1px rgba(255, 215, 0, 0.4);
+        }
+
+        /* Moderator badge */
+        .moderator-badge {
+            display: inline-block;
+            background: #34d399;
+            color: #000;
+            font-size: 10px;
+            font-weight: 700;
+            padding: 2px 6px;
+            border-radius: 4px;
+            margin-left: 6px;
+            text-transform: uppercase;
+        }
+
+        /* Member badge */
+        .member-badge {
+            display: inline-block;
+            background: #10b981;
+            color: #fff;
+            font-size: 10px;
+            font-weight: 700;
+            padding: 2px 6px;
+            border-radius: 4px;
+            margin-left: 6px;
+            text-transform: uppercase;
+        }
+
+        /* Scrollbar styling */
+        #messages::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        #messages::-webkit-scrollbar-track {
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 10px;
+        }
+
+        #messages::-webkit-scrollbar-thumb {
+            background: rgba(0, 245, 255, 0.5);
+            border-radius: 10px;
+        }
+
+        #messages::-webkit-scrollbar-thumb:hover {
+            background: rgba(0, 245, 255, 0.7);
+        }
+
+        /* Emoji styling */
+        .emoji {
+            font-size: 20px;
+            vertical-align: middle;
+        }
+
+        /* Link styling */
+        .message-content a {
+            color: #00f5ff;
+            text-decoration: none;
+            border-bottom: 1px solid rgba(0, 245, 255, 0.3);
+            transition: all 0.2s ease;
+        }
+
+        .message-content a:hover {
+            color: #ffffff;
+            border-bottom-color: #ffffff;
+        }
+
+        /* ==================================
+           VARIASI POSISI (uncomment untuk menggunakan)
+           ================================== */
+
+        /* Untuk posisi KIRI, ganti CSS #messages dengan: */
+        /*
+        #messages {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            right: auto;
+        }
+        */
+
+        /* Untuk posisi BAWAH KANAN: */
+        /*
+        #messages {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            top: auto;
+        }
+        */
+
+        /* Untuk posisi BAWAH KIRI: */
+        /*
+        #messages {
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+            top: auto;
+            right: auto;
+        }
+        */
+
+        /* ==================================
+           VARIASI WARNA BORDER (uncomment untuk menggunakan)
+           ================================== */
+
+        /* Gradient Rainbow */
+        /*
+        .message {
+            border-left: 4px solid;
+            border-image: linear-gradient(180deg, #667eea, #764ba2, #f093fb) 1;
+        }
+        */
+
+        /* Purple Theme */
+        /*
+        .message {
+            border-left-color: #a855f7;
+        }
+        .message:hover {
+            box-shadow: 
+                0 8px 30px rgba(168, 85, 247, 0.3),
+                0 0 0 1px rgba(168, 85, 247, 0.3);
+        }
+        */
+
+        /* Green Theme */
+        /*
+        .message {
+            border-left-color: #10b981;
+        }
+        .message:hover {
+            box-shadow: 
+                0 8px 30px rgba(16, 185, 129, 0.3),
+                0 0 0 1px rgba(16, 185, 129, 0.3);
+        }
+        */
+
+        /* ==================================
+           RESPONSIVE UNTUK MOBILE
+           ================================== */
+        @media (max-width: 768px) {
+            #messages {
+                width: 90%;
+                right: 5%;
+            }
+
+            .message {
+                padding: 12px;
+            }
+
+            .username {
+                font-size: 14px;
+            }
+
+            .message-content {
+                font-size: 13px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- DEMO PREVIEW -->
+    <div id="messages">
+        <div class="message">
+            <div class="message-header">
+                <img src="https://i.pravatar.cc/150?img=1" alt="Avatar" class="avatar">
+                <span class="username">JohnGamer123<span class="verified"></span></span>
+                <span class="platform youtube">YouTube</span>
+            </div>
+            <div class="message-content">
+                Wah streamnya keren banget! 🔥 Keep it up!
+            </div>
+            <div class="timestamp">2 detik yang lalu</div>
+        </div>
+
+        <div class="message highlighted">
+            <div class="message-header">
+                <img src="https://i.pravatar.cc/150?img=2" alt="Avatar" class="avatar">
+                <span class="username">
+                    MegaFan88
+                    <span class="member-badge">Member</span>
+                </span>
+                <span class="platform youtube">YouTube</span>
+            </div>
+            <div class="message-content">
+                Thanks for the amazing content! 💎✨
+            </div>
+            <div class="timestamp">5 detik yang lalu</div>
+        </div>
+
+        <div class="message">
+            <div class="message-header">
+                <img src="https://i.pravatar.cc/150?img=3" alt="Avatar" class="avatar">
+                <span class="username">
+                    StreamMod
+                    <span class="moderator-badge">Mod</span>
+                </span>
+                <span class="platform twitch">Twitch</span>
+            </div>
+            <div class="message-content">
+                Welcome everyone to the stream! 👋
+            </div>
+            <div class="timestamp">8 detik yang lalu</div>
+        </div>
+
+        <div class="message">
+            <div class="message-header">
+                <img src="https://i.pravatar.cc/150?img=4" alt="Avatar" class="avatar">
+                <span class="username">ProGamer999</span>
+                <span class="platform tiktok">TikTok</span>
+            </div>
+            <div class="message-content">
+                First time watching, loving it already! 😍
+            </div>
+            <div class="timestamp">12 detik yang lalu</div>
+        </div>
+    </div>
+
+    <script>
+        // Demo animation untuk test
+        setInterval(() => {
+            const messages = document.querySelectorAll('.message');
+            messages.forEach(msg => {
+                msg.style.animation = 'none';
+                setTimeout(() => {
+                    msg.style.animation = 'bounceIn 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55)';
+                }, 10);
+            });
+        }, 5000);
+    </script>
+</body>
+</html>
