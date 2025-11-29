@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chat Notification Overlay</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            background: transparent;
+            overflow: hidden;
+            width: 100vw;
+            height: 100vh;
+            font-family: Arial, sans-serif;
+        }
+        
+        /* Hidden container - completely transparent */
+        .notification-overlay {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            opacity: 0;
+            pointer-events: none;
+        }
+        
+        /* Status indicator (hidden but can be enabled for testing) */
+        .status {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            color: white;
+            font-size: 12px;
+            background: rgba(0,0,0,0.5);
+            padding: 5px;
+            border-radius: 3px;
+            display: none; /* Hidden by default */
+        }
+    </style>
+</head>
+<body>
+    <!-- Hidden overlay for notifications -->
+    <div class="notification-overlay" id="notificationOverlay">
+        <audio id="notificationSound" preload="auto">
+            <source src="https://kholiqakbar30-arch.github.io/Content_Creator/notif.mp3?session=aSdyhR7fWp" type="audio/mpeg">
+        </audio>
+    </div>
+    
+    <!-- Status indicator (hidden by default) -->
+    <div class="status" id="status">Notification System Ready</div>
+
+    <script>
+        class ChatNotification {
+            constructor() {
+                this.audio = document.getElementById('notificationSound');
+                this.status = document.getElementById('status');
+                this.isPlaying = false;
+                this.init();
+            }
+            
+            init() {
+                console.log('Chat Notification System Initialized');
+                
+                // Preload the audio
+                this.audio.load();
+                
+                // Show status for 3 seconds then hide
+                this.showStatus('System Ready', 3000);
+                
+                // Auto-play notification every 30 seconds for testing
+                // Comment this out in production
+                this.startTestMode();
+            }
+            
+            playNotification() {
+                if (this.isPlaying) return;
+                
+                this.isPlaying = true;
+                console.log('Playing notification sound');
+                
+                // Reset audio to start
+                this.audio.currentTime = 0;
+                
+                // Play the sound
+                this.audio.play().then(() => {
+                    this.showStatus('🔊 Notification Played', 2000);
+                }).catch(error => {
+                    console.error('Error playing notification:', error);
+                    this.showStatus('❌ Playback Error', 2000);
+                });
+                
+                // Reset playing state when audio ends
+                this.audio.onended = () => {
+                    this.isPlaying = false;
+                };
+                
+                // Safety timeout to reset playing state
+                setTimeout(() => {
+                    this.isPlaying = false;
+                }, 5000);
+            }
+            
+            showStatus(message, duration = 2000) {
+                // For testing/debugging purposes
+                this.status.textContent = message;
+                this.status.style.display = 'block';
+                
+                setTimeout(() => {
+                    this.status.style.display = 'none';
+                }, duration);
+            }
+            
+            startTestMode() {
+                // Auto-play every 30 seconds for testing
+                // Remove this in production
+                setInterval(() => {
+                    this.playNotification();
+                }, 30000);
+            }
+        }
+        
+        // Initialize when page loads
+        let notificationSystem;
+        document.addEventListener('DOMContentLoaded', function() {
+            notificationSystem = new ChatNotification();
+        });
+        
+        // Global function to trigger notification manually
+        // Can be called from browser console: window.triggerNotification()
+        window.triggerNotification = function() {
+            if (notificationSystem) {
+                notificationSystem.playNotification();
+            }
+        };
+        
+        // Alternative method: Listen for keyboard shortcut
+        document.addEventListener('keydown', function(event) {
+            // Press 'N' key to trigger notification (for testing)
+            if (event.key === 'n' || event.key === 'N') {
+                if (notificationSystem) {
+                    notificationSystem.playNotification();
+                }
+            }
+        });
+        
+        // Listen for messages from other windows (for integration)
+        window.addEventListener('message', function(event) {
+            if (event.data && event.data.type === 'PLAY_NOTIFICATION') {
+                if (notificationSystem) {
+                    notificationSystem.playNotification();
+                }
+            }
+        });
+        
+        // Expose API for external control
+        window.ChatNotifier = {
+            play: function() {
+                if (notificationSystem) {
+                    notificationSystem.playNotification();
+                }
+            },
+            test: function() {
+                if (notificationSystem) {
+                    notificationSystem.playNotification();
+                }
+            }
+        };
+    </script>
+</body>
+</html>
