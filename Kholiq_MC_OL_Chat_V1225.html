@@ -2,9 +2,8 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<title>Glass Comment Overlay - White Theme</title>
+<title>Glass Comment Overlay - White Theme (Persistent)</title>
 
-<!-- Font Poppins -->
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
 <style>
@@ -24,7 +23,6 @@
         height: 100vh;
     }
 
-    /* Container untuk semua komentar */
     #comments-container {
         position: absolute;
         top: 20px;
@@ -41,7 +39,6 @@
         scrollbar-color: rgba(0, 0, 0, 0.3) transparent;
     }
 
-    /* Scrollbar styling */
     #comments-container::-webkit-scrollbar {
         width: 6px;
     }
@@ -59,36 +56,24 @@
         background: rgba(0, 0, 0, 0.5);
     }
 
-    /* Styling setiap komentar - WHITE THEME */
     .comment {
         display: flex;
         align-items: flex-start;
         gap: 15px;
-        
-        /* Background putih solid */
         background: #FFFFFF;
-        
         border-radius: 16px;
         padding: 16px 20px;
-        
-        /* Shadow untuk depth */
         box-shadow: 
             0 4px 20px rgba(0, 0, 0, 0.08),
             0 1px 3px rgba(0, 0, 0, 0.05),
             inset 0 1px 0 rgba(255, 255, 255, 0.8);
-        
         border: 1px solid rgba(0, 0, 0, 0.08);
-        
-        /* Animasi masuk */
         opacity: 0;
         transform: translateX(-20px);
         animation: slideIn 0.5s cubic-bezier(0.22, 0.61, 0.36, 1) forwards;
-        
-        /* Smooth transition untuk highlight */
         transition: all 0.3s ease;
     }
 
-    /* Animasi masuk dari kiri */
     @keyframes slideIn {
         from {
             opacity: 0;
@@ -100,7 +85,6 @@
         }
     }
 
-    /* Avatar */
     .avatar {
         width: 48px;
         height: 48px;
@@ -112,13 +96,11 @@
         background: #f8f9fa;
     }
 
-    /* Konten komentar */
     .comment-content {
         flex: 1;
         min-width: 0;
     }
 
-    /* Header (username + badges) */
     .comment-header {
         display: flex;
         align-items: center;
@@ -127,7 +109,6 @@
         flex-wrap: wrap;
     }
 
-    /* Username - HITAM */
     .username {
         font-weight: 600;
         font-size: 16px;
@@ -135,7 +116,6 @@
         line-height: 1.3;
     }
 
-    /* Badges */
     .badges {
         display: flex;
         gap: 4px;
@@ -148,7 +128,6 @@
         border-radius: 3px;
     }
 
-    /* Timestamp */
     .timestamp {
         font-size: 12px;
         color: #666666;
@@ -157,7 +136,6 @@
         opacity: 0.8;
     }
 
-    /* Pesan - HITAM/GELAP */
     .message {
         font-weight: 400;
         font-size: 15px;
@@ -167,33 +145,14 @@
         margin-top: 4px;
     }
 
-    /* Platform-specific accent */
-    .comment.youtube {
-        border-left: 4px solid #FF0000;
-    }
-
-    .comment.twitch {
-        border-left: 4px solid #9146FF;
-    }
-
-    .comment.facebook {
-        border-left: 4px solid #1877F2;
-    }
-
-    .comment.tiktok {
-        border-left: 4px solid #FF0050;
-    }
-
-    .comment.kick {
-        border-left: 4px solid #53FC18;
-    }
-
+    .comment.youtube { border-left: 4px solid #FF0000; }
+    .comment.twitch { border-left: 4px solid #9146FF; }
+    .comment.facebook { border-left: 4px solid #1877F2; }
+    .comment.tiktok { border-left: 4px solid #FF0050; }
+    .comment.kick { border-left: 4px solid #53FC18; }
     .comment.twitter,
-    .comment.x {
-        border-left: 4px solid #1DA1F2;
-    }
+    .comment.x { border-left: 4px solid #1DA1F2; }
 
-    /* Highlight effect */
     .comment.highlight {
         background: #FFF8E1;
         border-color: #FFC107;
@@ -203,7 +162,6 @@
         transform: scale(1.02);
     }
 
-    /* Emoji dan gambar inline */
     .message img:not(.badge),
     .message .emoji {
         height: 20px;
@@ -214,7 +172,6 @@
         border-radius: 4px;
     }
 
-    /* Donation/membership info */
     .donation-info {
         display: inline-block;
         padding: 4px 10px;
@@ -227,12 +184,52 @@
         border: 1px solid rgba(0, 0, 0, 0.08);
     }
 
-    /* Responsive untuk layar kecil */
+    /* Control Panel */
+    #control-panel {
+        position: fixed;
+        top: 10px;
+        right: 10px;
+        background: rgba(255, 255, 255, 0.95);
+        border-radius: 12px;
+        padding: 10px 15px;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        border: 1px solid rgba(0, 0, 0, 0.1);
+        z-index: 1000;
+        font-size: 12px;
+        color: #333;
+        display: none;
+    }
+
+    #control-panel.show {
+        display: block;
+    }
+
+    .control-btn {
+        background: #f0f0f0;
+        border: none;
+        border-radius: 6px;
+        padding: 6px 12px;
+        margin: 3px;
+        font-size: 11px;
+        cursor: pointer;
+        transition: all 0.2s;
+    }
+
+    .control-btn:hover {
+        background: #e0e0e0;
+    }
+
+    .control-btn.clear {
+        background: #ffebee;
+        color: #d32f2f;
+    }
+
+    .control-btn.clear:hover {
+        background: #ffcdd2;
+    }
+
     @media (max-width: 768px) {
-        body {
-            padding: 10px;
-        }
-        
+        body { padding: 10px; }
         #comments-container {
             top: 10px;
             left: 10px;
@@ -240,27 +237,12 @@
             bottom: 10px;
             gap: 12px;
         }
-        
-        .comment {
-            padding: 14px 16px;
-            gap: 12px;
-        }
-        
-        .avatar {
-            width: 42px;
-            height: 42px;
-        }
-        
-        .username {
-            font-size: 15px;
-        }
-        
-        .message {
-            font-size: 14px;
-        }
+        .comment { padding: 14px 16px; gap: 12px; }
+        .avatar { width: 42px; height: 42px; }
+        .username { font-size: 15px; }
+        .message { font-size: 14px; }
     }
 
-    /* Loading/empty state */
     .empty-state {
         text-align: center;
         padding: 40px 20px;
@@ -281,6 +263,14 @@
 
 <body>
 
+<!-- Control Panel (hidden by default) -->
+<div id="control-panel">
+    <div>Chat Count: <span id="chat-count">0</span></div>
+    <button class="control-btn" onclick="toggleControlPanel()">Hide</button>
+    <button class="control-btn clear" onclick="clearAllChats()">Clear All</button>
+    <button class="control-btn" onclick="exportChats()">Export</button>
+</div>
+
 <div id="comments-container">
     <!-- Komentar akan ditampilkan di sini -->
 </div>
@@ -291,138 +281,101 @@
     const session = urlParams.get("session") || urlParams.get("room");
     const password = urlParams.get("password") || "false";
     const debug = urlParams.has("debug");
-    const maxComments = 50; // Maksimal komentar yang disimpan
+    const showControls = urlParams.has("controls");
+    const maxComments = 100; // Maksimal komentar yang disimpan di memory
     
-    // ========== ELEMEN CONTAINER ==========
+    // ========== STATE MANAGEMENT ==========
+    let allChats = []; // Menyimpan semua chat di memory
     const container = document.getElementById('comments-container');
+    const controlPanel = document.getElementById('control-panel');
+    const chatCountSpan = document.getElementById('chat-count');
     
     // ========== INISIALISASI ==========
-    if (!session) {
-        showError("Session ID tidak ditemukan. Gunakan: ?session=NAMA_ROOM_ANDA");
-    } else {
-        initializeSSNConnection();
-    }
     
-    // ========== FUNGSI UTAMA ==========
-    
-    function initializeSSNConnection() {
-        // Buat iframe untuk koneksi ke Social Stream Ninja
-        const iframe = document.createElement('iframe');
-        
-        // Konfigurasi iframe
-        iframe.style.cssText = `
-            position: fixed;
-            left: -100px;
-            top: -100px;
-            width: 1px;
-            height: 1px;
-            border: none;
-            opacity: 0;
-            pointer-events: none;
-        `;
-        
-        // URL Social Stream Ninja
-        const ssnUrl = `https://vdo.socialstream.ninja/?ln&password=${password}&salt=vdo.ninja&label=overlay&exclude=${session}&scene&novideo&noaudio&cleanoutput&room=${session}`;
-        iframe.src = ssnUrl;
-        iframe.id = 'ssnFrame';
-        
-        // Tambahkan ke body
-        document.body.appendChild(iframe);
-        
-        // Setup message listener
-        window.addEventListener('message', handleIncomingMessage);
-        
-        if (debug) {
-            console.log('SSN Connected:', ssnUrl);
-            // Tampilkan komentar test setelah 2 detik
-            setTimeout(() => {
-                addTestComment();
-            }, 2000);
+    // Load saved chats dari Local Storage saat pertama kali load
+    function loadSavedChats() {
+        try {
+            const saved = localStorage.getItem(`ssn_chats_${session}`);
+            if (saved) {
+                allChats = JSON.parse(saved);
+                if (debug) console.log(`Loaded ${allChats.length} saved chats`);
+            }
+        } catch (e) {
+            console.error('Error loading saved chats:', e);
+            allChats = [];
         }
         
-        // Tampilkan status awal
-        showStatusMessage('🔗 Menghubungkan ke Social Stream Ninja...');
+        // Update counter
+        updateChatCounter();
+        
+        // Render semua chat yang tersimpan
+        renderAllChats();
     }
     
-    function handleIncomingMessage(event) {
-        // Filter pesan yang bukan dari iframe SSN
-        const iframe = document.getElementById('ssnFrame');
-        if (!iframe || event.source !== iframe.contentWindow) return;
+    // Save chats ke Local Storage
+    function saveChatsToStorage() {
+        try {
+            // Simpan hanya 100 chat terbaru untuk menghindari storage penuh
+            const chatsToSave = allChats.slice(-maxComments);
+            localStorage.setItem(`ssn_chats_${session}`, JSON.stringify(chatsToSave));
+            if (debug) console.log(`Saved ${chatsToSave.length} chats to storage`);
+        } catch (e) {
+            console.error('Error saving chats:', e);
+        }
+    }
+    
+    // Update counter display
+    function updateChatCounter() {
+        chatCountSpan.textContent = allChats.length;
+    }
+    
+    // ========== RENDERING ==========
+    
+    function renderAllChats() {
+        // Clear container terlebih dahulu
+        container.innerHTML = '';
         
-        const data = event.data;
-        if (!data) return;
+        // Jika tidak ada chat, tampilkan status
+        if (allChats.length === 0) {
+            showStatusMessage('📭 Belum ada chat yang masuk...');
+            return;
+        }
         
-        // Debug logging
-        if (debug) console.log('Data received:', data);
-        
-        // Ekstrak data chat dari berbagai format SSN
-        let chatData = extractChatData(data);
-        
-        // Jika ada data chat valid, proses
-        if (chatData) {
-            // Hapus status message jika ada
-            const statusMsg = document.querySelector('.status-message');
-            if (statusMsg) statusMsg.remove();
+        // Render semua chat
+        allChats.forEach((chat, index) => {
+            // Hanya render chat dengan timestamp lebih dari 1 menit yang lalu
+            const chatTime = new Date(chat.timestamp);
+            const now = new Date();
+            const minutesAgo = (now - chatTime) / (1000 * 60);
             
-            // Tambahkan komentar baru
-            addComment(chatData);
-        }
+            // Optional: Filter chat yang terlalu lama jika perlu
+            // if (minutesAgo > 120) return; // Skip chat lebih dari 2 jam
+            
+            renderChatElement(chat, index);
+        });
+        
+        // Scroll ke bawah
+        setTimeout(() => {
+            container.scrollTop = container.scrollHeight;
+        }, 100);
     }
     
-    function extractChatData(data) {
-        // Format 1: Data langsung
-        if (data.chatname && data.chatmessage) {
-            return data;
-        }
-        
-        // Format 2: Nested dalam dataReceived.overlayNinja
-        if (data.dataReceived && data.dataReceived.overlayNinja) {
-            const nested = data.dataReceived.overlayNinja;
-            if (nested.chatname && nested.chatmessage) {
-                return nested;
-            }
-        }
-        
-        // Format 3: Dalam contents
-        if (data.contents && data.contents.chatname && data.contents.chatmessage) {
-            return data.contents;
-        }
-        
-        // Format 4: Action based
-        if (data.action === 'message' || data.action === 'chat') {
-            if (data.chatname && data.chatmessage) {
-                return data;
-            }
-        }
-        
-        return null;
-    }
-    
-    function addComment(chatData) {
-        // Limit jumlah komentar (hapus yang terlama jika melebihi limit)
-        const allComments = container.querySelectorAll('.comment:not(.status-message)');
-        if (allComments.length >= maxComments) {
-            const oldest = allComments[0];
-            oldest.style.opacity = '0';
-            oldest.style.transform = 'translateX(-100%)';
-            setTimeout(() => oldest.remove(), 500);
-        }
-        
-        // Buat elemen komentar
+    function renderChatElement(chatData, index) {
         const commentEl = document.createElement('div');
         commentEl.className = `comment ${chatData.type || ''}`;
+        commentEl.dataset.index = index;
         
-        // Generate timestamp
-        const now = new Date();
-        const timestamp = now.toLocaleTimeString('id-ID', {
+        // Format waktu
+        const chatTime = new Date(chatData.timestamp);
+        const timestamp = chatTime.toLocaleTimeString('id-ID', {
             hour: '2-digit',
             minute: '2-digit'
         });
         
-        // Avatar URL (dengan fallback)
+        // Avatar
         const avatarUrl = chatData.chatimg || 'https://socialstream.ninja/sources/images/unknown.png';
         
-        // Badges HTML
+        // Badges
         let badgesHtml = '';
         if (Array.isArray(chatData.chatbadges) && chatData.chatbadges.length > 0) {
             badgesHtml = chatData.chatbadges.map(badge => {
@@ -435,7 +388,7 @@
             }).filter(b => b).join('');
         }
         
-        // Donation/membership info
+        // Donation info
         let donationHtml = '';
         if (chatData.hasDonation) {
             donationHtml = `<div class="donation-info">${chatData.title || 'Donation'}: ${chatData.hasDonation}</div>`;
@@ -443,7 +396,7 @@
             donationHtml = `<div class="donation-info">${chatData.membership}</div>`;
         }
         
-        // Warna teks (pastikan terbaca di background putih)
+        // Warna teks
         const textColor = getReadableTextColor(chatData.textColor);
         const nameColor = getReadableTextColor(chatData.nameColor);
         
@@ -467,73 +420,192 @@
             </div>
         `;
         
-        // Tambahkan ke container (di atas)
+        // Tambahkan ke container
         container.appendChild(commentEl);
-        
-        // Scroll ke komentar terbaru
-        setTimeout(() => {
-            commentEl.scrollIntoView({ behavior: 'smooth', block: 'end' });
-        }, 100);
     }
     
-    // ========== FUNGSI HELPER ==========
+    // ========== CHAT PROCESSING ==========
     
-    function showError(message) {
+    function addNewChat(chatData) {
+        // Tambahkan timestamp dan ID unik
+        const enrichedChat = {
+            ...chatData,
+            id: Date.now() + Math.random().toString(36).substr(2, 9),
+            timestamp: new Date().toISOString(),
+            receivedAt: Date.now()
+        };
+        
+        // Tambahkan ke array
+        allChats.push(enrichedChat);
+        
+        // Batasi jumlah chat di memory
+        if (allChats.length > maxComments) {
+            allChats = allChats.slice(-maxComments);
+        }
+        
+        // Simpan ke storage
+        saveChatsToStorage();
+        
+        // Update counter
+        updateChatCounter();
+        
+        // Render chat baru
+        renderChatElement(enrichedChat, allChats.length - 1);
+        
+        // Scroll ke chat terbaru
+        setTimeout(() => {
+            container.scrollTop = container.scrollHeight;
+        }, 100);
+        
+        if (debug) console.log(`New chat added. Total: ${allChats.length}`);
+    }
+    
+    // ========== SSN CONNECTION ==========
+    
+    function initializeSSNConnection() {
+        // Load saved chats terlebih dahulu
+        loadSavedChats();
+        
+        // Tampilkan controls jika diminta
+        if (showControls) {
+            controlPanel.classList.add('show');
+        }
+        
+        // Setup iframe untuk SSN
+        const iframe = document.createElement('iframe');
+        iframe.style.cssText = `
+            position: fixed;
+            left: -100px;
+            top: -100px;
+            width: 1px;
+            height: 1px;
+            border: none;
+            opacity: 0;
+            pointer-events: none;
+        `;
+        
+        const ssnUrl = `https://vdo.socialstream.ninja/?ln&password=${password}&salt=vdo.ninja&label=overlay&exclude=${session}&scene&novideo&noaudio&cleanoutput&room=${session}`;
+        iframe.src = ssnUrl;
+        iframe.id = 'ssnFrame';
+        
+        document.body.appendChild(iframe);
+        
+        // Message listener
+        window.addEventListener('message', handleIncomingMessage);
+        
+        if (debug) {
+            console.log('SSN Connected:', ssnUrl);
+        }
+    }
+    
+    function handleIncomingMessage(event) {
+        const iframe = document.getElementById('ssnFrame');
+        if (!iframe || event.source !== iframe.contentWindow) return;
+        
+        const data = event.data;
+        if (!data) return;
+        
+        if (debug) console.log('SSN Data:', data);
+        
+        // Extract chat data
+        let chatData = extractChatData(data);
+        
+        if (chatData) {
+            // Hapus status message jika ada
+            const statusMsg = document.querySelector('.status-message');
+            if (statusMsg) statusMsg.remove();
+            
+            // Tambahkan chat baru
+            addNewChat(chatData);
+        }
+    }
+    
+    function extractChatData(data) {
+        // Format 1
+        if (data.chatname && data.chatmessage) {
+            return data;
+        }
+        
+        // Format 2
+        if (data.dataReceived && data.dataReceived.overlayNinja) {
+            const nested = data.dataReceived.overlayNinja;
+            if (nested.chatname && nested.chatmessage) {
+                return nested;
+            }
+        }
+        
+        // Format 3
+        if (data.contents && data.contents.chatname && data.contents.chatmessage) {
+            return data.contents;
+        }
+        
+        return null;
+    }
+    
+    // ========== CONTROL FUNCTIONS ==========
+    
+    function toggleControlPanel() {
+        controlPanel.classList.toggle('show');
+    }
+    
+    function clearAllChats() {
+        if (confirm('Hapus semua chat?')) {
+            allChats = [];
+            localStorage.removeItem(`ssn_chats_${session}`);
+            updateChatCounter();
+            renderAllChats();
+            showStatusMessage('🧹 Semua chat telah dihapus');
+        }
+    }
+    
+    function exportChats() {
+        const exportData = {
+            session: session,
+            exportDate: new Date().toISOString(),
+            totalChats: allChats.length,
+            chats: allChats
+        };
+        
+        const blob = new Blob([JSON.stringify(exportData, null, 2)], {type: 'application/json'});
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `chat_export_${session}_${Date.now()}.json`;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+    }
+    
+    // ========== HELPER FUNCTIONS ==========
+    
+    function showStatusMessage(message) {
         container.innerHTML = `
             <div class="empty-state">
-                <div class="icon">⚠️</div>
+                <div class="icon">📭</div>
                 <div>${message}</div>
             </div>
         `;
     }
     
-    function showStatusMessage(message) {
-        const statusEl = document.createElement('div');
-        statusEl.className = 'comment status-message';
-        statusEl.innerHTML = `
-            <div class="comment-content">
-                <div class="message" style="text-align: center; color: #666666;">
-                    ${message}
-                </div>
-            </div>
-        `;
-        container.appendChild(statusEl);
-    }
-    
-    function addTestComment() {
-        const testData = {
-            chatname: 'System Test',
-            chatmessage: '🎉 Overlay chat berhasil terhubung! Pesan akan muncul di sini.',
-            chatimg: 'https://socialstream.ninja/sources/images/unknown.png',
-            type: 'youtube'
-        };
-        addComment(testData);
-    }
-    
     function getReadableTextColor(hexColor) {
         if (!hexColor) return null;
-        
-        // Convert hex to RGB
         const hex = hexColor.replace('#', '');
+        if (hex.length !== 6) return null;
+        
         const r = parseInt(hex.substr(0, 2), 16);
         const g = parseInt(hex.substr(2, 2), 16);
         const b = parseInt(hex.substr(4, 2), 16);
         
-        // Calculate brightness (0-255)
         const brightness = (r * 299 + g * 587 + b * 114) / 1000;
-        
-        // If too bright for white background, use dark gray
         return brightness > 180 ? '#222222' : hexColor;
     }
     
     function formatMessage(message) {
         if (!message) return '';
-        // Basic HTML escaping and line breaks
         return escapeHtml(message)
             .replace(/\n/g, '<br>')
-            .replace(/&lt;3/g, '❤️')
-            .replace(/&lt;/g, '<')
-            .replace(/&gt;/g, '>');
+            .replace(/&lt;3/g, '❤️');
     }
     
     function escapeHtml(text) {
@@ -542,16 +614,50 @@
         return div.innerHTML;
     }
     
-    // ========== EVENT LISTENERS ==========
+    // ========== KEYBOARD SHORTCUTS ==========
+    document.addEventListener('keydown', (e) => {
+        // Ctrl+Shift+C untuk toggle control panel
+        if (e.ctrlKey && e.shiftKey && e.key === 'C') {
+            e.preventDefault();
+            toggleControlPanel();
+        }
+        
+        // Ctrl+Shift+X untuk clear all (dengan konfirmasi)
+        if (e.ctrlKey && e.shiftKey && e.key === 'X') {
+            e.preventDefault();
+            clearAllChats();
+        }
+    });
     
-    // Auto-clear untuk testing (opsional)
-    if (debug && urlParams.has('autoclear')) {
-        setInterval(() => {
-            const comments = container.querySelectorAll('.comment:not(.status-message)');
-            if (comments.length > 10) {
-                comments[0].remove();
-            }
-        }, 30000); // Hapus setiap 30 detik jika >10 komentar
+    // ========== START APPLICATION ==========
+    if (!session) {
+        showError("Session ID tidak ditemukan. Gunakan: ?session=NAMA_ROOM_ANDA");
+    } else {
+        initializeSSNConnection();
+        
+        // Test chat untuk debug
+        if (debug) {
+            setTimeout(() => {
+                addNewChat({
+                    chatname: 'System',
+                    chatmessage: '✅ Chat persistency aktif! Pesan tidak akan hilang saat pindah scene.',
+                    chatimg: 'https://socialstream.ninja/sources/images/unknown.png',
+                    type: 'system'
+                });
+            }, 1000);
+        }
+    }
+    
+    function showError(message) {
+        container.innerHTML = `
+            <div class="empty-state">
+                <div class="icon">⚠️</div>
+                <div>${message}</div>
+                <div style="margin-top: 10px; font-size: 13px; color: #888;">
+                    Contoh: your-url.html?session=ROOM_ID
+                </div>
+            </div>
+        `;
     }
 
 </script>
