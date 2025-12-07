@@ -10,8 +10,12 @@
 <style>
     body {
         margin: 0;
+        padding: 0;
         overflow: hidden;
         font-family: 'Poppins', sans-serif;
+        background: transparent !important;
+        width: 100vw;
+        height: 100vh;
     }
 
     #comments {
@@ -20,9 +24,11 @@
         left: 50%;
         transform: translateX(-50%);
         width: 90%;
+        max-width: 800px;
         display: flex;
         flex-direction: column-reverse;
         gap: 12px;
+        z-index: 1000;
     }
 
     .comment {
@@ -40,10 +46,14 @@
         color: white;
         font-size: 18px;
         max-width: 600px;
+        margin: 0 auto;
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+        border: 1px solid rgba(255, 255, 255, 0.2);
 
         opacity: 0;
         transform: translateY(30px);
         transition: all 0.5s ease;
+        pointer-events: none;
     }
 
     .comment.show {
@@ -54,6 +64,7 @@
     .comment.fade-out {
         opacity: 0;
         transform: translateY(-20px);
+        transition: all 0.7s ease;
     }
 
     .avatar {
@@ -61,13 +72,43 @@
         height: 38px;
         border-radius: 50%;
         object-fit: cover;
+        border: 2px solid rgba(255, 255, 255, 0.3);
+        flex-shrink: 0;
     }
+
+    .message-content {
+        flex: 1;
+        min-width: 0;
+    }
+
+    .username {
+        font-weight: 600;
+        font-size: 16px;
+        margin-bottom: 4px;
+        color: #ffffff;
+        text-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
+    }
+
+    .message {
+        font-weight: 300;
+        font-size: 15px;
+        line-height: 1.4;
+        color: rgba(255, 255, 255, 0.9);
+    }
+
+    /* Platform-specific colors */
+    .comment.youtube { border-left: 4px solid #FF0000; }
+    .comment.twitch { border-left: 4px solid #9146FF; }
+    .comment.facebook { border-left: 4px solid #1877F2; }
+    .comment.tiktok { border-left: 4px solid #FF0050; }
+    .comment.kick { border-left: 4px solid #53FC18; }
 
     /* Highlight (glow) saat dipilih di SSN Dock */
     .highlight {
-        box-shadow: 0 0 22px rgba(255, 255, 255, 1);
+        box-shadow: 0 0 25px rgba(255, 255, 255, 0.8), 0 0 45px rgba(0, 245, 255, 0.6);
         border: 2px solid rgba(255, 255, 255, 0.9);
-        transform: scale(1.06);
+        transform: scale(1.05);
+        transition: all 0.3s ease;
     }
 </style>
 </head>
@@ -77,59 +118,190 @@
 <div id="comments"></div>
 
 <script>
+    // Configuration from URL parameters
     const urlParams = new URLSearchParams(window.location.search);
-    const session = urlParams.get("session");
-
+    const session = urlParams.get("session") || urlParams.get("room");
+    const password = urlParams.get("password") || "false";
+    const debug = urlParams.has("debug");
+    
     if (!session) {
-        console.warn("❗ Gunakan URL dengan ?session=xxxx agar berfungsi.");
+        console.warn("❗ Session ID tidak ditemukan. Gunakan URL dengan ?session=xxxx");
+        document.getElementById("comments").innerHTML = 
+            `<div style="color: white; text-align: center; padding: 20px;">
+                Session ID tidak ditemukan. Gunakan ?session=xxxx di URL
+            </div>`;
     }
 
-    const ws = new WebSocket("wss://api.stream.ninja:443/?session=" + session);
+    // Connect to Social Stream Ninja via iframe method (more reliable)
+    let iframe;
+    
+    function initSSNConnection() {
+        iframe = document.createElement("iframe");
+        iframe.style.cssText = `
+            position: fixed;
+            left: -100px;
+            top: -100px;
+            width: 1px;
+            height: 1px;
+            border: none;
+            opacity: 0;
+            pointer-events: none;
+        `;
+        
+        // URL for Social Stream Ninja overlay
+        const ssnUrl = `https://vdo.socialstream.ninja/?ln&password=${password}&salt=vdo.ninja&label=overlay&exclude=${session}&scene&novideo&noaudio&cleanoutput&room=${session}`;
+        
+        iframe.src = ssnUrl;
+        iframe.id = "ssnFrame";
+        document.body.appendChild(iframe);
 
-    ws.onmessage = (event) => {
-        const data = JSON.parse(event.data);
+        // Listen for messages from SSN
+        window.addEventListener("message", handleSSNMessage, false);
+        
+        if (debug) console.log("SSN iframe created with URL:", ssnUrl);
+    }
 
-        // Event highlight
-        if (data.action === "highlight") {
-            document.querySelectorAll(".comment").forEach(el => {
-                el.classList.remove("highlight");
-                if (el.dataset.id == data.id) el.classList.add("highlight");
-            });
-            return;
+    function handleSSNMessage(event) {
+        // Filter messages from SSN iframe
+        if (event.source !== iframe.contentWindow) return;
+        
+        const data = event.data;
+        
+        if (debug) console.log("Received from SSN:", data);
+        
+        // Check different possible data formats from SSN
+        if (data && typeof data === 'object') {
+            // Format 1: Direct chat data
+            if (data.chatname && data.chatmessage) {
+                processChatMessage(data);
+            }
+            // Format 2: Nested in dataReceived
+            else if (data.dataReceived && data.dataReceived.overlayNinja) {
+                const chatData = data.dataReceived.overlayNinja;
+                if (chatData && chatData.chatname && chatData.chatmessage) {
+                    processChatMessage(chatData);
+                }
+            }
+            // Format 3: Content wrapper
+            else if (data.contents && data.contents.chatname && data.contents.chatmessage) {
+                processChatMessage(data.contents);
+            }
+            // Format 4: Action based
+            else if (data.action === "message" || data.action === "chat") {
+                processChatMessage(data);
+            }
         }
+    }
 
-        // Event new message
-        if (data.action === "message") {
-            addComment(data);
-        }
-    };
+    function processChatMessage(chatData) {
+        if (!chatData.chatname || !chatData.chatmessage) return;
+        
+        if (debug) console.log("Processing chat:", chatData);
+        
+        addComment({
+            id: Date.now() + Math.random(),
+            username: chatData.chatname,
+            message: chatData.chatmessage,
+            avatar: chatData.chatimg || 'https://socialstream.ninja/sources/images/unknown.png',
+            platform: chatData.type || 'default',
+            badges: chatData.chatbadges || []
+        });
+    }
 
     const container = document.getElementById("comments");
+    const maxComments = 5; // Maximum number of visible comments
 
     function addComment(data) {
-        let wrap = document.createElement("div");
-        wrap.className = "comment";
-        wrap.dataset.id = data.id;
+        // Remove oldest comment if we have too many
+        const comments = container.querySelectorAll('.comment');
+        if (comments.length >= maxComments) {
+            const oldest = comments[comments.length - 1];
+            oldest.classList.add('fade-out');
+            setTimeout(() => {
+                if (oldest.parentNode) oldest.remove();
+            }, 500);
+        }
 
-        wrap.innerHTML = `
-            <img class="avatar" src="${data.avatar}" />
-            <div>
-                <strong>${data.username}</strong><br>
-                ${data.message}
+        // Create new comment element
+        let commentEl = document.createElement("div");
+        commentEl.className = `comment ${data.platform}`;
+        commentEl.dataset.id = data.id;
+        commentEl.dataset.time = Date.now();
+
+        // Process badges HTML
+        let badgesHtml = '';
+        if (Array.isArray(data.badges) && data.badges.length > 0) {
+            badgesHtml = data.badges.map(badge => {
+                if (typeof badge === 'string') {
+                    return `<img src="${badge}" style="height: 16px; margin-right: 4px;" />`;
+                } else if (badge.src) {
+                    return `<img src="${badge.src}" style="height: 16px; margin-right: 4px;" />`;
+                }
+                return '';
+            }).join('');
+        }
+
+        // Set inner HTML
+        commentEl.innerHTML = `
+            <img class="avatar" src="${data.avatar}" onerror="this.src='https://socialstream.ninja/sources/images/unknown.png'" />
+            <div class="message-content">
+                <div class="username">
+                    ${data.username}
+                    ${badgesHtml ? `<span class="badges">${badgesHtml}</span>` : ''}
+                </div>
+                <div class="message">${data.message}</div>
             </div>
         `;
 
-        container.appendChild(wrap);
+        // Add to container at the top (since it's column-reverse)
+        container.insertBefore(commentEl, container.firstChild);
 
-        // Fade-in + slide from bottom
-        setTimeout(() => wrap.classList.add("show"), 50);
-
-        // Auto remove (6 sec)
+        // Animate in
         setTimeout(() => {
-            wrap.classList.add("fade-out");
-            setTimeout(() => wrap.remove(), 700);
-        }, 6000);
+            commentEl.classList.add("show");
+        }, 50);
+
+        // Auto remove after 10 seconds
+        setTimeout(() => {
+            if (commentEl.parentNode) {
+                commentEl.classList.add("fade-out");
+                setTimeout(() => {
+                    if (commentEl.parentNode) commentEl.remove();
+                }, 700);
+            }
+        }, 10000);
     }
+
+    // Manual test function (for debugging)
+    function testComment() {
+        addComment({
+            id: 'test-' + Date.now(),
+            username: 'Test User',
+            message: 'Ini adalah pesan test untuk overlay chat! 🎉',
+            avatar: 'https://socialstream.ninja/sources/images/unknown.png',
+            platform: 'youtube'
+        });
+    }
+
+    // Initialize
+    if (session) {
+        initSSNConnection();
+        
+        // Test comment after 2 seconds if debug mode
+        if (debug) {
+            setTimeout(testComment, 2000);
+            console.log("Debug mode enabled. Session:", session);
+        }
+    }
+
+    // Fallback: if no connection after 10 seconds, show test comment
+    setTimeout(() => {
+        if (container.children.length === 0 && debug) {
+            testComment();
+            console.log("No messages received, showing test comment");
+        }
+    }, 10000);
+
 </script>
 
 </body>
