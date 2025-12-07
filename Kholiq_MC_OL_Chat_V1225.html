@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Glass Comment Overlay</title>
+
+<!-- Font Poppins -->
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+
+<style>
+    body {
+        margin: 0;
+        overflow: hidden;
+        font-family: 'Poppins', sans-serif;
+    }
+
+    #comments {
+        position: absolute;
+        bottom: 30px;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 90%;
+        display: flex;
+        flex-direction: column-reverse;
+        gap: 12px;
+    }
+
+    .comment {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+
+        /* Glass effect + 80% transparency */
+        background: rgba(255, 255, 255, 0.15);
+        backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
+
+        border-radius: 18px;
+        padding: 12px 16px;
+        color: white;
+        font-size: 18px;
+        max-width: 600px;
+
+        opacity: 0;
+        transform: translateY(30px);
+        transition: all 0.5s ease;
+    }
+
+    .comment.show {
+        opacity: 1;
+        transform: translateY(0);
+    }
+
+    .comment.fade-out {
+        opacity: 0;
+        transform: translateY(-20px);
+    }
+
+    .avatar {
+        width: 38px;
+        height: 38px;
+        border-radius: 50%;
+        object-fit: cover;
+    }
+
+    /* Highlight (glow) saat dipilih di SSN Dock */
+    .highlight {
+        box-shadow: 0 0 22px rgba(255, 255, 255, 1);
+        border: 2px solid rgba(255, 255, 255, 0.9);
+        transform: scale(1.06);
+    }
+</style>
+</head>
+
+<body>
+
+<div id="comments"></div>
+
+<script>
+    const urlParams = new URLSearchParams(window.location.search);
+    const session = urlParams.get("session");
+
+    if (!session) {
+        console.warn("❗ Gunakan URL dengan ?session=xxxx agar berfungsi.");
+    }
+
+    const ws = new WebSocket("wss://api.stream.ninja:443/?session=" + session);
+
+    ws.onmessage = (event) => {
+        const data = JSON.parse(event.data);
+
+        // Event highlight
+        if (data.action === "highlight") {
+            document.querySelectorAll(".comment").forEach(el => {
+                el.classList.remove("highlight");
+                if (el.dataset.id == data.id) el.classList.add("highlight");
+            });
+            return;
+        }
+
+        // Event new message
+        if (data.action === "message") {
+            addComment(data);
+        }
+    };
+
+    const container = document.getElementById("comments");
+
+    function addComment(data) {
+        let wrap = document.createElement("div");
+        wrap.className = "comment";
+        wrap.dataset.id = data.id;
+
+        wrap.innerHTML = `
+            <img class="avatar" src="${data.avatar}" />
+            <div>
+                <strong>${data.username}</strong><br>
+                ${data.message}
+            </div>
+        `;
+
+        container.appendChild(wrap);
+
+        // Fade-in + slide from bottom
+        setTimeout(() => wrap.classList.add("show"), 50);
+
+        // Auto remove (6 sec)
+        setTimeout(() => {
+            wrap.classList.add("fade-out");
+            setTimeout(() => wrap.remove(), 700);
+        }, 6000);
+    }
+</script>
+
+</body>
+</html>
