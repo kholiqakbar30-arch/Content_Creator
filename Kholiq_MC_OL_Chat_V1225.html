@@ -2,11 +2,12 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<title>Glass Comment Overlay - White Theme (Persistent)</title>
+<title>Glass Comment Overlay - Auto Scroll Fix</title>
 
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
 <style>
+    /* [CSS SAMA PERSIS SEPERTI SEBELUMNYA] */
     * {
         margin: 0;
         padding: 0;
@@ -85,6 +86,24 @@
         }
     }
 
+    /* Animasi untuk chat baru saja */
+    .comment.new-chat {
+        animation: slideInNew 0.5s cubic-bezier(0.22, 0.61, 0.36, 1) forwards;
+        background: #f8f9fa;
+        border-left-width: 5px;
+    }
+
+    @keyframes slideInNew {
+        from {
+            opacity: 0;
+            transform: translateY(20px) scale(0.95);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0) scale(1);
+        }
+    }
+
     .avatar {
         width: 48px;
         height: 48px;
@@ -145,89 +164,75 @@
         margin-top: 4px;
     }
 
-    .comment.youtube { border-left: 4px solid #FF0000; }
-    .comment.twitch { border-left: 4px solid #9146FF; }
-    .comment.facebook { border-left: 4px solid #1877F2; }
-    .comment.tiktok { border-left: 4px solid #FF0050; }
-    .comment.kick { border-left: 4px solid #53FC18; }
+    /* Platform colors */
+    .comment.youtube { border-left-color: #FF0000; }
+    .comment.twitch { border-left-color: #9146FF; }
+    .comment.facebook { border-left-color: #1877F2; }
+    .comment.tiktok { border-left-color: #FF0050; }
+    .comment.kick { border-left-color: #53FC18; }
     .comment.twitter,
-    .comment.x { border-left: 4px solid #1DA1F2; }
+    .comment.x { border-left-color: #1DA1F2; }
 
-    .comment.highlight {
-        background: #FFF8E1;
-        border-color: #FFC107;
-        box-shadow: 
-            0 4px 25px rgba(255, 193, 7, 0.15),
-            0 0 0 2px rgba(255, 193, 7, 0.1);
-        transform: scale(1.02);
-    }
-
-    .message img:not(.badge),
-    .message .emoji {
-        height: 20px;
-        width: 20px;
-        vertical-align: middle;
-        margin: 0 2px;
-        display: inline-block;
-        border-radius: 4px;
-    }
-
-    .donation-info {
-        display: inline-block;
-        padding: 4px 10px;
-        background: linear-gradient(135deg, #f8f9fa, #e9ecef);
-        border-radius: 8px;
-        font-size: 12px;
-        font-weight: 600;
-        color: #495057;
-        margin-top: 8px;
-        border: 1px solid rgba(0, 0, 0, 0.08);
-    }
-
-    /* Control Panel */
-    #control-panel {
+    /* Auto-scroll indicator */
+    #scroll-indicator {
         position: fixed;
+        bottom: 30px;
+        right: 30px;
+        background: rgba(0, 0, 0, 0.8);
+        color: white;
+        padding: 8px 12px;
+        border-radius: 20px;
+        font-size: 12px;
+        cursor: pointer;
+        display: none;
+        z-index: 1000;
+        transition: all 0.3s;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    }
+
+    #scroll-indicator:hover {
+        background: rgba(0, 0, 0, 0.9);
+        transform: scale(1.05);
+    }
+
+    #scroll-indicator.show {
+        display: block;
+        animation: pulse 2s infinite;
+    }
+
+    @keyframes pulse {
+        0% { box-shadow: 0 0 0 0 rgba(0, 123, 255, 0.7); }
+        70% { box-shadow: 0 0 0 10px rgba(0, 123, 255, 0); }
+        100% { box-shadow: 0 0 0 0 rgba(0, 123, 255, 0); }
+    }
+
+    /* New chat notification */
+    .new-notification {
+        position: absolute;
         top: 10px;
         right: 10px;
-        background: rgba(255, 255, 255, 0.95);
+        background: #28a745;
+        color: white;
+        padding: 4px 10px;
         border-radius: 12px;
-        padding: 10px 15px;
-        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-        border: 1px solid rgba(0, 0, 0, 0.1);
-        z-index: 1000;
-        font-size: 12px;
-        color: #333;
+        font-size: 11px;
+        font-weight: 600;
+        animation: bounceIn 0.5s;
         display: none;
+        z-index: 1001;
     }
 
-    #control-panel.show {
+    @keyframes bounceIn {
+        0% { transform: scale(0.5); opacity: 0; }
+        70% { transform: scale(1.1); }
+        100% { transform: scale(1); opacity: 1; }
+    }
+
+    .new-notification.show {
         display: block;
     }
 
-    .control-btn {
-        background: #f0f0f0;
-        border: none;
-        border-radius: 6px;
-        padding: 6px 12px;
-        margin: 3px;
-        font-size: 11px;
-        cursor: pointer;
-        transition: all 0.2s;
-    }
-
-    .control-btn:hover {
-        background: #e0e0e0;
-    }
-
-    .control-btn.clear {
-        background: #ffebee;
-        color: #d32f2f;
-    }
-
-    .control-btn.clear:hover {
-        background: #ffcdd2;
-    }
-
+    /* Responsive */
     @media (max-width: 768px) {
         body { padding: 10px; }
         #comments-container {
@@ -241,6 +246,10 @@
         .avatar { width: 42px; height: 42px; }
         .username { font-size: 15px; }
         .message { font-size: 14px; }
+        #scroll-indicator {
+            bottom: 15px;
+            right: 15px;
+        }
     }
 
     .empty-state {
@@ -263,13 +272,11 @@
 
 <body>
 
-<!-- Control Panel (hidden by default) -->
-<div id="control-panel">
-    <div>Chat Count: <span id="chat-count">0</span></div>
-    <button class="control-btn" onclick="toggleControlPanel()">Hide</button>
-    <button class="control-btn clear" onclick="clearAllChats()">Clear All</button>
-    <button class="control-btn" onclick="exportChats()">Export</button>
-</div>
+<!-- New Chat Notification -->
+<div id="new-notification" class="new-notification">💬 New Message</div>
+
+<!-- Scroll Indicator -->
+<div id="scroll-indicator" onclick="scrollToBottom()">▼ New Messages</div>
 
 <div id="comments-container">
     <!-- Komentar akan ditampilkan di sini -->
@@ -281,96 +288,211 @@
     const session = urlParams.get("session") || urlParams.get("room");
     const password = urlParams.get("password") || "false";
     const debug = urlParams.has("debug");
-    const showControls = urlParams.has("controls");
-    const maxComments = 100; // Maksimal komentar yang disimpan di memory
+    const autoScroll = !urlParams.has("noautoscroll"); // Default true
+    const maxComments = 150;
     
-    // ========== STATE MANAGEMENT ==========
-    let allChats = []; // Menyimpan semua chat di memory
+    // ========== STATE VARIABLES ==========
+    let allChats = [];
+    let lastScrollPosition = 0;
+    let isUserScrolling = false;
+    let scrollTimeout = null;
+    let lastChatId = null;
+    let isInitialLoad = true;
+    
+    // ========== DOM ELEMENTS ==========
     const container = document.getElementById('comments-container');
-    const controlPanel = document.getElementById('control-panel');
-    const chatCountSpan = document.getElementById('chat-count');
+    const scrollIndicator = document.getElementById('scroll-indicator');
+    const newNotification = document.getElementById('new-notification');
     
-    // ========== INISIALISASI ==========
+    // ========== INITIALIZATION ==========
     
-    // Load saved chats dari Local Storage saat pertama kali load
+    document.addEventListener('DOMContentLoaded', () => {
+        if (!session) {
+            showError("Session ID tidak ditemukan. Gunakan: ?session=NAMA_ROOM_ANDA");
+            return;
+        }
+        
+        // Setup scroll detection
+        setupScrollDetection();
+        
+        // Load saved chats
+        loadSavedChats();
+        
+        // Connect to SSN
+        initializeSSNConnection();
+        
+        // Setup auto-scroll on resize
+        window.addEventListener('resize', () => {
+            if (!isUserScrolling) {
+                requestAnimationFrame(() => {
+                    scrollToBottomIfNeeded();
+                });
+            }
+        });
+        
+        if (debug) {
+            console.log('Chat Overlay initialized with auto-scroll:', autoScroll);
+        }
+    });
+    
+    // ========== SCROLL MANAGEMENT ==========
+    
+    function setupScrollDetection() {
+        container.addEventListener('scroll', () => {
+            // User is manually scrolling
+            isUserScrolling = true;
+            clearTimeout(scrollTimeout);
+            
+            // Check if user is at bottom
+            const isAtBottom = container.scrollHeight - container.scrollTop - container.clientHeight < 50;
+            
+            if (isAtBottom) {
+                // User scrolled to bottom, hide indicator
+                hideScrollIndicator();
+                isUserScrolling = false;
+            } else {
+                // User scrolled away from bottom, show indicator if new messages
+                scrollTimeout = setTimeout(() => {
+                    isUserScrolling = false;
+                }, 1000);
+            }
+            
+            // Update last scroll position
+            lastScrollPosition = container.scrollTop;
+        });
+        
+        // Reset user scrolling flag after 2 seconds of inactivity
+        container.addEventListener('scrollend', () => {
+            setTimeout(() => {
+                isUserScrolling = false;
+            }, 2000);
+        });
+    }
+    
+    function checkAndShowScrollIndicator() {
+        if (!autoScroll) return;
+        
+        const isAtBottom = container.scrollHeight - container.scrollTop - container.clientHeight < 50;
+        
+        if (!isAtBottom && !isUserScrolling) {
+            showScrollIndicator();
+        } else {
+            hideScrollIndicator();
+        }
+    }
+    
+    function showScrollIndicator() {
+        scrollIndicator.classList.add('show');
+    }
+    
+    function hideScrollIndicator() {
+        scrollIndicator.classList.remove('show');
+    }
+    
+    function scrollToBottom() {
+        container.scrollTo({
+            top: container.scrollHeight,
+            behavior: 'smooth'
+        });
+        hideScrollIndicator();
+        isUserScrolling = false;
+    }
+    
+    function scrollToBottomIfNeeded() {
+        if (!autoScroll || isUserScrolling) return;
+        
+        // Jika ini initial load atau user belum scroll manual
+        if (isInitialLoad || !isUserScrolling) {
+            container.scrollTo({
+                top: container.scrollHeight,
+                behavior: 'smooth'
+            });
+        }
+    }
+    
+    function showNewMessageNotification() {
+        if (isUserScrolling) {
+            newNotification.classList.add('show');
+            setTimeout(() => {
+                newNotification.classList.remove('show');
+            }, 3000);
+        }
+    }
+    
+    // ========== CHAT STORAGE ==========
+    
     function loadSavedChats() {
         try {
             const saved = localStorage.getItem(`ssn_chats_${session}`);
             if (saved) {
                 allChats = JSON.parse(saved);
                 if (debug) console.log(`Loaded ${allChats.length} saved chats`);
+                
+                // Set last chat ID
+                if (allChats.length > 0) {
+                    lastChatId = allChats[allChats.length - 1].id;
+                }
             }
         } catch (e) {
             console.error('Error loading saved chats:', e);
             allChats = [];
         }
         
-        // Update counter
-        updateChatCounter();
-        
-        // Render semua chat yang tersimpan
+        // Render all chats
         renderAllChats();
+        
+        // Initial scroll to bottom
+        setTimeout(() => {
+            scrollToBottomIfNeeded();
+            isInitialLoad = false;
+        }, 300);
     }
     
-    // Save chats ke Local Storage
     function saveChatsToStorage() {
         try {
-            // Simpan hanya 100 chat terbaru untuk menghindari storage penuh
             const chatsToSave = allChats.slice(-maxComments);
             localStorage.setItem(`ssn_chats_${session}`, JSON.stringify(chatsToSave));
-            if (debug) console.log(`Saved ${chatsToSave.length} chats to storage`);
         } catch (e) {
             console.error('Error saving chats:', e);
         }
     }
     
-    // Update counter display
-    function updateChatCounter() {
-        chatCountSpan.textContent = allChats.length;
-    }
-    
-    // ========== RENDERING ==========
+    // ========== CHAT RENDERING ==========
     
     function renderAllChats() {
-        // Clear container terlebih dahulu
         container.innerHTML = '';
         
-        // Jika tidak ada chat, tampilkan status
         if (allChats.length === 0) {
             showStatusMessage('📭 Belum ada chat yang masuk...');
             return;
         }
         
-        // Render semua chat
         allChats.forEach((chat, index) => {
-            // Hanya render chat dengan timestamp lebih dari 1 menit yang lalu
-            const chatTime = new Date(chat.timestamp);
-            const now = new Date();
-            const minutesAgo = (now - chatTime) / (1000 * 60);
-            
-            // Optional: Filter chat yang terlalu lama jika perlu
-            // if (minutesAgo > 120) return; // Skip chat lebih dari 2 jam
-            
-            renderChatElement(chat, index);
+            renderChatElement(chat, index, false); // false = bukan chat baru
         });
-        
-        // Scroll ke bawah
-        setTimeout(() => {
-            container.scrollTop = container.scrollHeight;
-        }, 100);
     }
     
-    function renderChatElement(chatData, index) {
+    function renderChatElement(chatData, index, isNew = true) {
         const commentEl = document.createElement('div');
-        commentEl.className = `comment ${chatData.type || ''}`;
-        commentEl.dataset.index = index;
+        commentEl.className = `comment ${chatData.type || ''} ${isNew ? 'new-chat' : ''}`;
+        commentEl.dataset.id = chatData.id;
         
         // Format waktu
         const chatTime = new Date(chatData.timestamp);
-        const timestamp = chatTime.toLocaleTimeString('id-ID', {
-            hour: '2-digit',
-            minute: '2-digit'
-        });
+        const now = new Date();
+        const timeDiff = (now - chatTime) / (1000 * 60); // dalam menit
+        
+        let timeDisplay;
+        if (timeDiff < 1) {
+            timeDisplay = 'Baru saja';
+        } else if (timeDiff < 60) {
+            timeDisplay = `${Math.floor(timeDiff)} menit lalu`;
+        } else {
+            timeDisplay = chatTime.toLocaleTimeString('id-ID', {
+                hour: '2-digit',
+                minute: '2-digit'
+            });
+        }
         
         // Avatar
         const avatarUrl = chatData.chatimg || 'https://socialstream.ninja/sources/images/unknown.png';
@@ -412,7 +534,7 @@
                     </span>
                     ${badgesHtml ? `<div class="badges">${badgesHtml}</div>` : ''}
                 </div>
-                <div class="timestamp">${timestamp}</div>
+                <div class="timestamp">${timeDisplay}</div>
                 <div class="message" style="color: ${textColor || '#222222'}">
                     ${formatMessage(chatData.chatmessage)}
                 </div>
@@ -422,56 +544,72 @@
         
         // Tambahkan ke container
         container.appendChild(commentEl);
+        
+        // Jika chat baru, trigger animation dan auto-scroll logic
+        if (isNew) {
+            // Show new message notification
+            showNewMessageNotification();
+            
+            // Auto-scroll jika user tidak sedang scroll manual
+            if (!isUserScrolling && autoScroll) {
+                setTimeout(() => {
+                    scrollToBottomIfNeeded();
+                }, 100);
+            } else {
+                // Show scroll indicator
+                checkAndShowScrollIndicator();
+            }
+        }
     }
     
     // ========== CHAT PROCESSING ==========
     
     function addNewChat(chatData) {
-        // Tambahkan timestamp dan ID unik
+        // Generate unique ID dengan timestamp
+        const chatId = `chat_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+        
         const enrichedChat = {
             ...chatData,
-            id: Date.now() + Math.random().toString(36).substr(2, 9),
+            id: chatId,
             timestamp: new Date().toISOString(),
             receivedAt: Date.now()
         };
         
-        // Tambahkan ke array
+        // Cek duplikat (prevent duplicate on reconnection)
+        const isDuplicate = allChats.some(chat => 
+            chat.chatname === chatData.chatname && 
+            chat.chatmessage === chatData.chatmessage &&
+            (Date.now() - new Date(chat.timestamp).getTime()) < 5000 // 5 detik terakhir
+        );
+        
+        if (isDuplicate) {
+            if (debug) console.log('Duplicate chat detected, skipping');
+            return;
+        }
+        
+        // Add to array
         allChats.push(enrichedChat);
         
-        // Batasi jumlah chat di memory
+        // Limit array size
         if (allChats.length > maxComments) {
             allChats = allChats.slice(-maxComments);
         }
         
-        // Simpan ke storage
+        // Save to storage
         saveChatsToStorage();
         
-        // Update counter
-        updateChatCounter();
+        // Update last chat ID
+        lastChatId = chatId;
         
-        // Render chat baru
-        renderChatElement(enrichedChat, allChats.length - 1);
+        // Render new chat
+        renderChatElement(enrichedChat, allChats.length - 1, true);
         
-        // Scroll ke chat terbaru
-        setTimeout(() => {
-            container.scrollTop = container.scrollHeight;
-        }, 100);
-        
-        if (debug) console.log(`New chat added. Total: ${allChats.length}`);
+        if (debug) console.log(`New chat added: ${chatData.chatname} - ${chatData.chatmessage.substring(0, 30)}...`);
     }
     
     // ========== SSN CONNECTION ==========
     
     function initializeSSNConnection() {
-        // Load saved chats terlebih dahulu
-        loadSavedChats();
-        
-        // Tampilkan controls jika diminta
-        if (showControls) {
-            controlPanel.classList.add('show');
-        }
-        
-        // Setup iframe untuk SSN
         const iframe = document.createElement('iframe');
         iframe.style.cssText = `
             position: fixed;
@@ -495,6 +633,16 @@
         
         if (debug) {
             console.log('SSN Connected:', ssnUrl);
+            
+            // Test chat untuk debug
+            setTimeout(() => {
+                addNewChat({
+                    chatname: 'System',
+                    chatmessage: '✅ Auto-scroll aktif! Chat baru akan muncul di bawah.',
+                    chatimg: 'https://socialstream.ninja/sources/images/unknown.png',
+                    type: 'system'
+                });
+            }, 1500);
         }
     }
     
@@ -505,28 +653,27 @@
         const data = event.data;
         if (!data) return;
         
-        if (debug) console.log('SSN Data:', data);
+        if (debug) console.log('SSN Data received:', data);
         
         // Extract chat data
         let chatData = extractChatData(data);
         
         if (chatData) {
             // Hapus status message jika ada
-            const statusMsg = document.querySelector('.status-message');
+            const statusMsg = document.querySelector('.empty-state');
             if (statusMsg) statusMsg.remove();
             
-            // Tambahkan chat baru
+            // Add new chat
             addNewChat(chatData);
         }
     }
     
     function extractChatData(data) {
-        // Format 1
+        // Check various SSN data formats
         if (data.chatname && data.chatmessage) {
             return data;
         }
         
-        // Format 2
         if (data.dataReceived && data.dataReceived.overlayNinja) {
             const nested = data.dataReceived.overlayNinja;
             if (nested.chatname && nested.chatmessage) {
@@ -534,47 +681,11 @@
             }
         }
         
-        // Format 3
         if (data.contents && data.contents.chatname && data.contents.chatmessage) {
             return data.contents;
         }
         
         return null;
-    }
-    
-    // ========== CONTROL FUNCTIONS ==========
-    
-    function toggleControlPanel() {
-        controlPanel.classList.toggle('show');
-    }
-    
-    function clearAllChats() {
-        if (confirm('Hapus semua chat?')) {
-            allChats = [];
-            localStorage.removeItem(`ssn_chats_${session}`);
-            updateChatCounter();
-            renderAllChats();
-            showStatusMessage('🧹 Semua chat telah dihapus');
-        }
-    }
-    
-    function exportChats() {
-        const exportData = {
-            session: session,
-            exportDate: new Date().toISOString(),
-            totalChats: allChats.length,
-            chats: allChats
-        };
-        
-        const blob = new Blob([JSON.stringify(exportData, null, 2)], {type: 'application/json'});
-        const url = URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = `chat_export_${session}_${Date.now()}.json`;
-        document.body.appendChild(a);
-        a.click();
-        document.body.removeChild(a);
-        URL.revokeObjectURL(url);
     }
     
     // ========== HELPER FUNCTIONS ==========
@@ -588,24 +699,46 @@
         `;
     }
     
+    function showError(message) {
+        container.innerHTML = `
+            <div class="empty-state">
+                <div class="icon">⚠️</div>
+                <div>${message}</div>
+            </div>
+        `;
+    }
+    
     function getReadableTextColor(hexColor) {
         if (!hexColor) return null;
-        const hex = hexColor.replace('#', '');
-        if (hex.length !== 6) return null;
-        
-        const r = parseInt(hex.substr(0, 2), 16);
-        const g = parseInt(hex.substr(2, 2), 16);
-        const b = parseInt(hex.substr(4, 2), 16);
-        
-        const brightness = (r * 299 + g * 587 + b * 114) / 1000;
-        return brightness > 180 ? '#222222' : hexColor;
+        try {
+            const hex = hexColor.replace('#', '');
+            if (hex.length !== 6 && hex.length !== 3) return null;
+            
+            let r, g, b;
+            if (hex.length === 3) {
+                r = parseInt(hex[0] + hex[0], 16);
+                g = parseInt(hex[1] + hex[1], 16);
+                b = parseInt(hex[2] + hex[2], 16);
+            } else {
+                r = parseInt(hex.substr(0, 2), 16);
+                g = parseInt(hex.substr(2, 2), 16);
+                b = parseInt(hex.substr(4, 2), 16);
+            }
+            
+            const brightness = (r * 299 + g * 587 + b * 114) / 1000;
+            return brightness > 180 ? '#222222' : hexColor;
+        } catch (e) {
+            return '#222222';
+        }
     }
     
     function formatMessage(message) {
         if (!message) return '';
         return escapeHtml(message)
             .replace(/\n/g, '<br>')
-            .replace(/&lt;3/g, '❤️');
+            .replace(/&lt;3/g, '❤️')
+            .replace(/&lt;/g, '<')
+            .replace(/&gt;/g, '>');
     }
     
     function escapeHtml(text) {
@@ -614,51 +747,16 @@
         return div.innerHTML;
     }
     
-    // ========== KEYBOARD SHORTCUTS ==========
-    document.addEventListener('keydown', (e) => {
-        // Ctrl+Shift+C untuk toggle control panel
-        if (e.ctrlKey && e.shiftKey && e.key === 'C') {
-            e.preventDefault();
-            toggleControlPanel();
+    // ========== GLOBAL FUNCTIONS ==========
+    window.scrollToBottom = scrollToBottom;
+    window.clearAllChats = () => {
+        if (confirm('Hapus semua chat?')) {
+            allChats = [];
+            localStorage.removeItem(`ssn_chats_${session}`);
+            renderAllChats();
+            showStatusMessage('🧹 Semua chat telah dihapus');
         }
-        
-        // Ctrl+Shift+X untuk clear all (dengan konfirmasi)
-        if (e.ctrlKey && e.shiftKey && e.key === 'X') {
-            e.preventDefault();
-            clearAllChats();
-        }
-    });
-    
-    // ========== START APPLICATION ==========
-    if (!session) {
-        showError("Session ID tidak ditemukan. Gunakan: ?session=NAMA_ROOM_ANDA");
-    } else {
-        initializeSSNConnection();
-        
-        // Test chat untuk debug
-        if (debug) {
-            setTimeout(() => {
-                addNewChat({
-                    chatname: 'System',
-                    chatmessage: '✅ Chat persistency aktif! Pesan tidak akan hilang saat pindah scene.',
-                    chatimg: 'https://socialstream.ninja/sources/images/unknown.png',
-                    type: 'system'
-                });
-            }, 1000);
-        }
-    }
-    
-    function showError(message) {
-        container.innerHTML = `
-            <div class="empty-state">
-                <div class="icon">⚠️</div>
-                <div>${message}</div>
-                <div style="margin-top: 10px; font-size: 13px; color: #888;">
-                    Contoh: your-url.html?session=ROOM_ID
-                </div>
-            </div>
-        `;
-    }
+    };
 
 </script>
 </body>
