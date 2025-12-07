@@ -2,15 +2,21 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<title>Glass Comment Overlay</title>
+<title>Glass Comment Overlay - White Theme</title>
 
 <!-- Font Poppins -->
-<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
 <style>
-    body {
+    * {
         margin: 0;
         padding: 0;
+        box-sizing: border-box;
+    }
+
+    body {
+        margin: 0;
+        padding: 20px;
         overflow: hidden;
         font-family: 'Poppins', sans-serif;
         background: transparent !important;
@@ -18,125 +24,292 @@
         height: 100vh;
     }
 
-    #comments {
+    /* Container untuk semua komentar */
+    #comments-container {
         position: absolute;
-        bottom: 30px;
-        left: 50%;
-        transform: translateX(-50%);
-        width: 90%;
-        max-width: 800px;
+        top: 20px;
+        left: 20px;
+        right: 20px;
+        bottom: 20px;
+        overflow-y: auto;
+        overflow-x: hidden;
         display: flex;
-        flex-direction: column-reverse;
-        gap: 12px;
-        z-index: 1000;
+        flex-direction: column;
+        gap: 15px;
+        padding-right: 10px;
+        scrollbar-width: thin;
+        scrollbar-color: rgba(0, 0, 0, 0.3) transparent;
     }
 
+    /* Scrollbar styling */
+    #comments-container::-webkit-scrollbar {
+        width: 6px;
+    }
+
+    #comments-container::-webkit-scrollbar-track {
+        background: transparent;
+    }
+
+    #comments-container::-webkit-scrollbar-thumb {
+        background: rgba(0, 0, 0, 0.3);
+        border-radius: 3px;
+    }
+
+    #comments-container::-webkit-scrollbar-thumb:hover {
+        background: rgba(0, 0, 0, 0.5);
+    }
+
+    /* Styling setiap komentar - WHITE THEME */
     .comment {
         display: flex;
-        align-items: center;
-        gap: 12px;
-
-        /* Glass effect + 80% transparency */
-        background: rgba(255, 255, 255, 0.15);
-        backdrop-filter: blur(20px);
-        -webkit-backdrop-filter: blur(20px);
-
-        border-radius: 18px;
-        padding: 12px 16px;
-        color: white;
-        font-size: 18px;
-        max-width: 600px;
-        margin: 0 auto;
-        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
-        border: 1px solid rgba(255, 255, 255, 0.2);
-
+        align-items: flex-start;
+        gap: 15px;
+        
+        /* Background putih solid */
+        background: #FFFFFF;
+        
+        border-radius: 16px;
+        padding: 16px 20px;
+        
+        /* Shadow untuk depth */
+        box-shadow: 
+            0 4px 20px rgba(0, 0, 0, 0.08),
+            0 1px 3px rgba(0, 0, 0, 0.05),
+            inset 0 1px 0 rgba(255, 255, 255, 0.8);
+        
+        border: 1px solid rgba(0, 0, 0, 0.08);
+        
+        /* Animasi masuk */
         opacity: 0;
-        transform: translateY(30px);
-        transition: all 0.5s ease;
-        pointer-events: none;
+        transform: translateX(-20px);
+        animation: slideIn 0.5s cubic-bezier(0.22, 0.61, 0.36, 1) forwards;
+        
+        /* Smooth transition untuk highlight */
+        transition: all 0.3s ease;
     }
 
-    .comment.show {
-        opacity: 1;
-        transform: translateY(0);
+    /* Animasi masuk dari kiri */
+    @keyframes slideIn {
+        from {
+            opacity: 0;
+            transform: translateX(-20px);
+        }
+        to {
+            opacity: 1;
+            transform: translateX(0);
+        }
     }
 
-    .comment.fade-out {
-        opacity: 0;
-        transform: translateY(-20px);
-        transition: all 0.7s ease;
-    }
-
+    /* Avatar */
     .avatar {
-        width: 38px;
-        height: 38px;
+        width: 48px;
+        height: 48px;
         border-radius: 50%;
         object-fit: cover;
-        border: 2px solid rgba(255, 255, 255, 0.3);
         flex-shrink: 0;
+        border: 2px solid rgba(0, 0, 0, 0.1);
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+        background: #f8f9fa;
     }
 
-    .message-content {
+    /* Konten komentar */
+    .comment-content {
         flex: 1;
         min-width: 0;
     }
 
+    /* Header (username + badges) */
+    .comment-header {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin-bottom: 8px;
+        flex-wrap: wrap;
+    }
+
+    /* Username - HITAM */
     .username {
         font-weight: 600;
         font-size: 16px;
-        margin-bottom: 4px;
-        color: #ffffff;
-        text-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
+        color: #111111;
+        line-height: 1.3;
     }
 
+    /* Badges */
+    .badges {
+        display: flex;
+        gap: 4px;
+        align-items: center;
+    }
+
+    .badge {
+        height: 18px;
+        width: auto;
+        border-radius: 3px;
+    }
+
+    /* Timestamp */
+    .timestamp {
+        font-size: 12px;
+        color: #666666;
+        font-weight: 400;
+        margin-top: 2px;
+        opacity: 0.8;
+    }
+
+    /* Pesan - HITAM/GELAP */
     .message {
-        font-weight: 300;
+        font-weight: 400;
         font-size: 15px;
-        line-height: 1.4;
-        color: rgba(255, 255, 255, 0.9);
+        line-height: 1.5;
+        color: #222222;
+        word-wrap: break-word;
+        margin-top: 4px;
     }
 
-    /* Platform-specific colors */
-    .comment.youtube { border-left: 4px solid #FF0000; }
-    .comment.twitch { border-left: 4px solid #9146FF; }
-    .comment.facebook { border-left: 4px solid #1877F2; }
-    .comment.tiktok { border-left: 4px solid #FF0050; }
-    .comment.kick { border-left: 4px solid #53FC18; }
+    /* Platform-specific accent */
+    .comment.youtube {
+        border-left: 4px solid #FF0000;
+    }
 
-    /* Highlight (glow) saat dipilih di SSN Dock */
-    .highlight {
-        box-shadow: 0 0 25px rgba(255, 255, 255, 0.8), 0 0 45px rgba(0, 245, 255, 0.6);
-        border: 2px solid rgba(255, 255, 255, 0.9);
-        transform: scale(1.05);
-        transition: all 0.3s ease;
+    .comment.twitch {
+        border-left: 4px solid #9146FF;
+    }
+
+    .comment.facebook {
+        border-left: 4px solid #1877F2;
+    }
+
+    .comment.tiktok {
+        border-left: 4px solid #FF0050;
+    }
+
+    .comment.kick {
+        border-left: 4px solid #53FC18;
+    }
+
+    .comment.twitter,
+    .comment.x {
+        border-left: 4px solid #1DA1F2;
+    }
+
+    /* Highlight effect */
+    .comment.highlight {
+        background: #FFF8E1;
+        border-color: #FFC107;
+        box-shadow: 
+            0 4px 25px rgba(255, 193, 7, 0.15),
+            0 0 0 2px rgba(255, 193, 7, 0.1);
+        transform: scale(1.02);
+    }
+
+    /* Emoji dan gambar inline */
+    .message img:not(.badge),
+    .message .emoji {
+        height: 20px;
+        width: 20px;
+        vertical-align: middle;
+        margin: 0 2px;
+        display: inline-block;
+        border-radius: 4px;
+    }
+
+    /* Donation/membership info */
+    .donation-info {
+        display: inline-block;
+        padding: 4px 10px;
+        background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+        border-radius: 8px;
+        font-size: 12px;
+        font-weight: 600;
+        color: #495057;
+        margin-top: 8px;
+        border: 1px solid rgba(0, 0, 0, 0.08);
+    }
+
+    /* Responsive untuk layar kecil */
+    @media (max-width: 768px) {
+        body {
+            padding: 10px;
+        }
+        
+        #comments-container {
+            top: 10px;
+            left: 10px;
+            right: 10px;
+            bottom: 10px;
+            gap: 12px;
+        }
+        
+        .comment {
+            padding: 14px 16px;
+            gap: 12px;
+        }
+        
+        .avatar {
+            width: 42px;
+            height: 42px;
+        }
+        
+        .username {
+            font-size: 15px;
+        }
+        
+        .message {
+            font-size: 14px;
+        }
+    }
+
+    /* Loading/empty state */
+    .empty-state {
+        text-align: center;
+        padding: 40px 20px;
+        color: #666666;
+        font-size: 15px;
+        background: rgba(255, 255, 255, 0.9);
+        border-radius: 16px;
+        border: 2px dashed rgba(0, 0, 0, 0.1);
+    }
+
+    .empty-state .icon {
+        font-size: 40px;
+        margin-bottom: 15px;
+        opacity: 0.5;
     }
 </style>
 </head>
 
 <body>
 
-<div id="comments"></div>
+<div id="comments-container">
+    <!-- Komentar akan ditampilkan di sini -->
+</div>
 
 <script>
-    // Configuration from URL parameters
+    // ========== KONFIGURASI ==========
     const urlParams = new URLSearchParams(window.location.search);
     const session = urlParams.get("session") || urlParams.get("room");
     const password = urlParams.get("password") || "false";
     const debug = urlParams.has("debug");
+    const maxComments = 50; // Maksimal komentar yang disimpan
     
+    // ========== ELEMEN CONTAINER ==========
+    const container = document.getElementById('comments-container');
+    
+    // ========== INISIALISASI ==========
     if (!session) {
-        console.warn("❗ Session ID tidak ditemukan. Gunakan URL dengan ?session=xxxx");
-        document.getElementById("comments").innerHTML = 
-            `<div style="color: white; text-align: center; padding: 20px;">
-                Session ID tidak ditemukan. Gunakan ?session=xxxx di URL
-            </div>`;
+        showError("Session ID tidak ditemukan. Gunakan: ?session=NAMA_ROOM_ANDA");
+    } else {
+        initializeSSNConnection();
     }
-
-    // Connect to Social Stream Ninja via iframe method (more reliable)
-    let iframe;
     
-    function initSSNConnection() {
-        iframe = document.createElement("iframe");
+    // ========== FUNGSI UTAMA ==========
+    
+    function initializeSSNConnection() {
+        // Buat iframe untuk koneksi ke Social Stream Ninja
+        const iframe = document.createElement('iframe');
+        
+        // Konfigurasi iframe
         iframe.style.cssText = `
             position: fixed;
             left: -100px;
@@ -148,161 +321,239 @@
             pointer-events: none;
         `;
         
-        // URL for Social Stream Ninja overlay
+        // URL Social Stream Ninja
         const ssnUrl = `https://vdo.socialstream.ninja/?ln&password=${password}&salt=vdo.ninja&label=overlay&exclude=${session}&scene&novideo&noaudio&cleanoutput&room=${session}`;
-        
         iframe.src = ssnUrl;
-        iframe.id = "ssnFrame";
-        document.body.appendChild(iframe);
-
-        // Listen for messages from SSN
-        window.addEventListener("message", handleSSNMessage, false);
+        iframe.id = 'ssnFrame';
         
-        if (debug) console.log("SSN iframe created with URL:", ssnUrl);
+        // Tambahkan ke body
+        document.body.appendChild(iframe);
+        
+        // Setup message listener
+        window.addEventListener('message', handleIncomingMessage);
+        
+        if (debug) {
+            console.log('SSN Connected:', ssnUrl);
+            // Tampilkan komentar test setelah 2 detik
+            setTimeout(() => {
+                addTestComment();
+            }, 2000);
+        }
+        
+        // Tampilkan status awal
+        showStatusMessage('🔗 Menghubungkan ke Social Stream Ninja...');
     }
-
-    function handleSSNMessage(event) {
-        // Filter messages from SSN iframe
-        if (event.source !== iframe.contentWindow) return;
+    
+    function handleIncomingMessage(event) {
+        // Filter pesan yang bukan dari iframe SSN
+        const iframe = document.getElementById('ssnFrame');
+        if (!iframe || event.source !== iframe.contentWindow) return;
         
         const data = event.data;
+        if (!data) return;
         
-        if (debug) console.log("Received from SSN:", data);
+        // Debug logging
+        if (debug) console.log('Data received:', data);
         
-        // Check different possible data formats from SSN
-        if (data && typeof data === 'object') {
-            // Format 1: Direct chat data
+        // Ekstrak data chat dari berbagai format SSN
+        let chatData = extractChatData(data);
+        
+        // Jika ada data chat valid, proses
+        if (chatData) {
+            // Hapus status message jika ada
+            const statusMsg = document.querySelector('.status-message');
+            if (statusMsg) statusMsg.remove();
+            
+            // Tambahkan komentar baru
+            addComment(chatData);
+        }
+    }
+    
+    function extractChatData(data) {
+        // Format 1: Data langsung
+        if (data.chatname && data.chatmessage) {
+            return data;
+        }
+        
+        // Format 2: Nested dalam dataReceived.overlayNinja
+        if (data.dataReceived && data.dataReceived.overlayNinja) {
+            const nested = data.dataReceived.overlayNinja;
+            if (nested.chatname && nested.chatmessage) {
+                return nested;
+            }
+        }
+        
+        // Format 3: Dalam contents
+        if (data.contents && data.contents.chatname && data.contents.chatmessage) {
+            return data.contents;
+        }
+        
+        // Format 4: Action based
+        if (data.action === 'message' || data.action === 'chat') {
             if (data.chatname && data.chatmessage) {
-                processChatMessage(data);
-            }
-            // Format 2: Nested in dataReceived
-            else if (data.dataReceived && data.dataReceived.overlayNinja) {
-                const chatData = data.dataReceived.overlayNinja;
-                if (chatData && chatData.chatname && chatData.chatmessage) {
-                    processChatMessage(chatData);
-                }
-            }
-            // Format 3: Content wrapper
-            else if (data.contents && data.contents.chatname && data.contents.chatmessage) {
-                processChatMessage(data.contents);
-            }
-            // Format 4: Action based
-            else if (data.action === "message" || data.action === "chat") {
-                processChatMessage(data);
+                return data;
             }
         }
+        
+        return null;
     }
-
-    function processChatMessage(chatData) {
-        if (!chatData.chatname || !chatData.chatmessage) return;
+    
+    function addComment(chatData) {
+        // Limit jumlah komentar (hapus yang terlama jika melebihi limit)
+        const allComments = container.querySelectorAll('.comment:not(.status-message)');
+        if (allComments.length >= maxComments) {
+            const oldest = allComments[0];
+            oldest.style.opacity = '0';
+            oldest.style.transform = 'translateX(-100%)';
+            setTimeout(() => oldest.remove(), 500);
+        }
         
-        if (debug) console.log("Processing chat:", chatData);
+        // Buat elemen komentar
+        const commentEl = document.createElement('div');
+        commentEl.className = `comment ${chatData.type || ''}`;
         
-        addComment({
-            id: Date.now() + Math.random(),
-            username: chatData.chatname,
-            message: chatData.chatmessage,
-            avatar: chatData.chatimg || 'https://socialstream.ninja/sources/images/unknown.png',
-            platform: chatData.type || 'default',
-            badges: chatData.chatbadges || []
+        // Generate timestamp
+        const now = new Date();
+        const timestamp = now.toLocaleTimeString('id-ID', {
+            hour: '2-digit',
+            minute: '2-digit'
         });
-    }
-
-    const container = document.getElementById("comments");
-    const maxComments = 5; // Maximum number of visible comments
-
-    function addComment(data) {
-        // Remove oldest comment if we have too many
-        const comments = container.querySelectorAll('.comment');
-        if (comments.length >= maxComments) {
-            const oldest = comments[comments.length - 1];
-            oldest.classList.add('fade-out');
-            setTimeout(() => {
-                if (oldest.parentNode) oldest.remove();
-            }, 500);
-        }
-
-        // Create new comment element
-        let commentEl = document.createElement("div");
-        commentEl.className = `comment ${data.platform}`;
-        commentEl.dataset.id = data.id;
-        commentEl.dataset.time = Date.now();
-
-        // Process badges HTML
+        
+        // Avatar URL (dengan fallback)
+        const avatarUrl = chatData.chatimg || 'https://socialstream.ninja/sources/images/unknown.png';
+        
+        // Badges HTML
         let badgesHtml = '';
-        if (Array.isArray(data.badges) && data.badges.length > 0) {
-            badgesHtml = data.badges.map(badge => {
+        if (Array.isArray(chatData.chatbadges) && chatData.chatbadges.length > 0) {
+            badgesHtml = chatData.chatbadges.map(badge => {
                 if (typeof badge === 'string') {
-                    return `<img src="${badge}" style="height: 16px; margin-right: 4px;" />`;
+                    return `<img class="badge" src="${badge}" alt="badge">`;
                 } else if (badge.src) {
-                    return `<img src="${badge.src}" style="height: 16px; margin-right: 4px;" />`;
+                    return `<img class="badge" src="${badge.src}" alt="badge">`;
                 }
                 return '';
-            }).join('');
+            }).filter(b => b).join('');
         }
-
-        // Set inner HTML
+        
+        // Donation/membership info
+        let donationHtml = '';
+        if (chatData.hasDonation) {
+            donationHtml = `<div class="donation-info">${chatData.title || 'Donation'}: ${chatData.hasDonation}</div>`;
+        } else if (chatData.membership) {
+            donationHtml = `<div class="donation-info">${chatData.membership}</div>`;
+        }
+        
+        // Warna teks (pastikan terbaca di background putih)
+        const textColor = getReadableTextColor(chatData.textColor);
+        const nameColor = getReadableTextColor(chatData.nameColor);
+        
+        // Set HTML
         commentEl.innerHTML = `
-            <img class="avatar" src="${data.avatar}" onerror="this.src='https://socialstream.ninja/sources/images/unknown.png'" />
-            <div class="message-content">
-                <div class="username">
-                    ${data.username}
-                    ${badgesHtml ? `<span class="badges">${badgesHtml}</span>` : ''}
+            <img class="avatar" src="${avatarUrl}" 
+                 onerror="this.src='https://socialstream.ninja/sources/images/unknown.png'"
+                 alt="${chatData.chatname}">
+            <div class="comment-content">
+                <div class="comment-header">
+                    <span class="username" style="color: ${nameColor || '#111111'}">
+                        ${escapeHtml(chatData.chatname)}
+                    </span>
+                    ${badgesHtml ? `<div class="badges">${badgesHtml}</div>` : ''}
                 </div>
-                <div class="message">${data.message}</div>
+                <div class="timestamp">${timestamp}</div>
+                <div class="message" style="color: ${textColor || '#222222'}">
+                    ${formatMessage(chatData.chatmessage)}
+                </div>
+                ${donationHtml}
             </div>
         `;
-
-        // Add to container at the top (since it's column-reverse)
-        container.insertBefore(commentEl, container.firstChild);
-
-        // Animate in
-        setTimeout(() => {
-            commentEl.classList.add("show");
-        }, 50);
-
-        // Auto remove after 10 seconds
-        setTimeout(() => {
-            if (commentEl.parentNode) {
-                commentEl.classList.add("fade-out");
-                setTimeout(() => {
-                    if (commentEl.parentNode) commentEl.remove();
-                }, 700);
-            }
-        }, 10000);
-    }
-
-    // Manual test function (for debugging)
-    function testComment() {
-        addComment({
-            id: 'test-' + Date.now(),
-            username: 'Test User',
-            message: 'Ini adalah pesan test untuk overlay chat! 🎉',
-            avatar: 'https://socialstream.ninja/sources/images/unknown.png',
-            platform: 'youtube'
-        });
-    }
-
-    // Initialize
-    if (session) {
-        initSSNConnection();
         
-        // Test comment after 2 seconds if debug mode
-        if (debug) {
-            setTimeout(testComment, 2000);
-            console.log("Debug mode enabled. Session:", session);
-        }
+        // Tambahkan ke container (di atas)
+        container.appendChild(commentEl);
+        
+        // Scroll ke komentar terbaru
+        setTimeout(() => {
+            commentEl.scrollIntoView({ behavior: 'smooth', block: 'end' });
+        }, 100);
     }
-
-    // Fallback: if no connection after 10 seconds, show test comment
-    setTimeout(() => {
-        if (container.children.length === 0 && debug) {
-            testComment();
-            console.log("No messages received, showing test comment");
-        }
-    }, 10000);
+    
+    // ========== FUNGSI HELPER ==========
+    
+    function showError(message) {
+        container.innerHTML = `
+            <div class="empty-state">
+                <div class="icon">⚠️</div>
+                <div>${message}</div>
+            </div>
+        `;
+    }
+    
+    function showStatusMessage(message) {
+        const statusEl = document.createElement('div');
+        statusEl.className = 'comment status-message';
+        statusEl.innerHTML = `
+            <div class="comment-content">
+                <div class="message" style="text-align: center; color: #666666;">
+                    ${message}
+                </div>
+            </div>
+        `;
+        container.appendChild(statusEl);
+    }
+    
+    function addTestComment() {
+        const testData = {
+            chatname: 'System Test',
+            chatmessage: '🎉 Overlay chat berhasil terhubung! Pesan akan muncul di sini.',
+            chatimg: 'https://socialstream.ninja/sources/images/unknown.png',
+            type: 'youtube'
+        };
+        addComment(testData);
+    }
+    
+    function getReadableTextColor(hexColor) {
+        if (!hexColor) return null;
+        
+        // Convert hex to RGB
+        const hex = hexColor.replace('#', '');
+        const r = parseInt(hex.substr(0, 2), 16);
+        const g = parseInt(hex.substr(2, 2), 16);
+        const b = parseInt(hex.substr(4, 2), 16);
+        
+        // Calculate brightness (0-255)
+        const brightness = (r * 299 + g * 587 + b * 114) / 1000;
+        
+        // If too bright for white background, use dark gray
+        return brightness > 180 ? '#222222' : hexColor;
+    }
+    
+    function formatMessage(message) {
+        if (!message) return '';
+        // Basic HTML escaping and line breaks
+        return escapeHtml(message)
+            .replace(/\n/g, '<br>')
+            .replace(/&lt;3/g, '❤️')
+            .replace(/&lt;/g, '<')
+            .replace(/&gt;/g, '>');
+    }
+    
+    function escapeHtml(text) {
+        const div = document.createElement('div');
+        div.textContent = text;
+        return div.innerHTML;
+    }
+    
+    // ========== EVENT LISTENERS ==========
+    
+    // Auto-clear untuk testing (opsional)
+    if (debug && urlParams.has('autoclear')) {
+        setInterval(() => {
+            const comments = container.querySelectorAll('.comment:not(.status-message)');
+            if (comments.length > 10) {
+                comments[0].remove();
+            }
+        }, 30000); // Hapus setiap 30 detik jika >10 komentar
+    }
 
 </script>
-
 </body>
 </html>
