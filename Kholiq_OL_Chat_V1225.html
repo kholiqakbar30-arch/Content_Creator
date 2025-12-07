@@ -1,0 +1,704 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Featured Message - White Modern</title>
+    <link rel="preload" href="https://socialstream.ninja/thirdparty/NotoColorEmoji.ttf" as="font" type="font/ttf" crossorigin="anonymous">
+    <style>
+        @font-face {
+            font-family: NotoColorEmojiLimited;
+            unicode-range: U+1F1E6-1F1FF;
+            src: url(https://socialstream.ninja/thirdparty/NotoColorEmoji.ttf);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif, 'NotoColorEmojiLimited';
+            background: transparent;
+            overflow: hidden;
+            width: 100vw;
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        #container {
+            width: 100%;
+            max-width: 700px;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        /* MODERN BOUNCE ANIMATION */
+        .message-wrapper {
+            opacity: 0;
+            transform: scale(0.3) translateY(100px);
+            transition: all 0.7s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+            width: 100%;
+        }
+
+        .message-wrapper.show {
+            opacity: 1;
+            transform: scale(1) translateY(0);
+            animation: bounceInCenter 0.7s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+        }
+
+        @keyframes bounceInCenter {
+            0% {
+                opacity: 0;
+                transform: scale(0.3) translateY(100px);
+            }
+            50% {
+                transform: scale(1.08) translateY(-15px);
+            }
+            70% {
+                transform: scale(0.95) translateY(8px);
+            }
+            85% {
+                transform: scale(1.02) translateY(-5px);
+            }
+            100% {
+                opacity: 1;
+                transform: scale(1) translateY(0);
+            }
+        }
+
+        .message-wrapper.hide {
+            opacity: 0;
+            transform: scale(0.8) translateY(-50px);
+            transition: all 0.4s ease-out;
+        }
+
+        /* MODERN WHITE MESSAGE STYLE */
+        .message {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            padding: 20px 24px;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
+            border-radius: 16px;
+            border-left: 4px solid #000000;
+            box-shadow: 
+                0 10px 40px rgba(0, 0, 0, 0.15),
+                0 0 0 1px rgba(0, 0, 0, 0.08),
+                inset 0 1px 0 rgba(255, 255, 255, 0.8);
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .message:hover {
+            transform: translateY(-4px);
+            box-shadow: 
+                0 15px 50px rgba(0, 0, 0, 0.2),
+                0 0 0 1px rgba(0, 0, 0, 0.12),
+                inset 0 1px 0 rgba(255, 255, 255, 0.9);
+            background: rgba(255, 255, 255, 0.98);
+        }
+
+        /* ACCENT LINE */
+        .message::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: linear-gradient(90deg, 
+                transparent, 
+                rgba(0, 0, 0, 0.15), 
+                transparent);
+            opacity: 0.8;
+        }
+
+        /* SUBTLE TEXTURE OVERLAY */
+        .message::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: 
+                radial-gradient(circle at 20% 80%, rgba(0, 0, 0, 0.02) 0%, transparent 50%),
+                radial-gradient(circle at 80% 20%, rgba(0, 0, 0, 0.02) 0%, transparent 50%);
+            pointer-events: none;
+            z-index: -1;
+        }
+
+        /* AVATAR - WHITE THEME */
+        .avatar {
+            width: 56px;
+            height: 56px;
+            border-radius: 50%;
+            object-fit: cover;
+            flex-shrink: 0;
+            border: 2px solid rgba(0, 0, 0, 0.15);
+            box-shadow: 
+                0 4px 12px rgba(0, 0, 0, 0.1),
+                inset 0 1px 0 rgba(255, 255, 255, 0.8);
+            background: white;
+        }
+
+        /* CONTENT */
+        .message-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            min-width: 0;
+        }
+
+        /* USERNAME - BLACK TEXT */
+        .username {
+            font-weight: 700;
+            font-size: 17px;
+            color: #111111;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            text-shadow: 0 1px 2px rgba(255, 255, 255, 0.8);
+        }
+
+        .source-icon {
+            width: 18px;
+            height: 18px;
+            opacity: 0.8;
+            filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.1));
+        }
+
+        /* BADGES */
+        .badges {
+            display: inline-flex;
+            gap: 4px;
+            align-items: center;
+        }
+
+        .badge {
+            height: 18px;
+            width: auto;
+            opacity: 0.9;
+        }
+
+        /* MESSAGE TEXT - DARK GRAY */
+        .text {
+            font-size: 16px;
+            line-height: 1.5;
+            color: #333333;
+            word-wrap: break-word;
+            text-shadow: 0 1px 2px rgba(255, 255, 255, 0.8);
+        }
+
+        /* Inline images/emotes */
+        .text img,
+        .text svg {
+            max-width: 28px;
+            max-height: 28px;
+            height: auto;
+            width: auto;
+            vertical-align: middle;
+            object-fit: contain;
+            margin: 0 2px;
+            display: inline-block;
+            border-radius: 4px;
+            background: rgba(0, 0, 0, 0.05);
+            padding: 2px;
+        }
+
+        /* DONATION/MEMBERSHIP - DARK ACCENT */
+        .donation-info {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 12px;
+            border-radius: 8px;
+            font-size: 13px;
+            font-weight: 600;
+            margin-top: 6px;
+            background: linear-gradient(135deg, rgba(0, 0, 0, 0.05), rgba(0, 0, 0, 0.08));
+            color: #222222;
+            border: 1px solid rgba(0, 0, 0, 0.1);
+            box-shadow: 
+                0 2px 8px rgba(0, 0, 0, 0.05),
+                inset 0 1px 0 rgba(255, 255, 255, 0.5);
+        }
+
+        /* CONTENT IMAGE */
+        .content-image {
+            max-width: 280px;
+            max-height: 280px;
+            margin-top: 10px;
+            border-radius: 10px;
+            border: 1px solid rgba(0, 0, 0, 0.1);
+            box-shadow: 
+                0 4px 12px rgba(0, 0, 0, 0.08),
+                inset 0 1px 0 rgba(255, 255, 255, 0.8);
+            background: white;
+        }
+
+        /* PLATFORM SPECIFIC COLORS - DARK ACCENTS */
+        .message[data-platform="youtube"] {
+            border-left-color: #ff0000;
+        }
+
+        .message[data-platform="youtube"]::before {
+            background: linear-gradient(90deg, transparent, rgba(255, 0, 0, 0.3), transparent);
+        }
+
+        .message[data-platform="youtube"] .avatar {
+            border-color: rgba(255, 0, 0, 0.3);
+            box-shadow: 
+                0 4px 12px rgba(255, 0, 0, 0.15),
+                inset 0 1px 0 rgba(255, 255, 255, 0.8);
+        }
+
+        .message[data-platform="twitch"] {
+            border-left-color: #9146ff;
+        }
+
+        .message[data-platform="twitch"]::before {
+            background: linear-gradient(90deg, transparent, rgba(145, 70, 255, 0.3), transparent);
+        }
+
+        .message[data-platform="twitch"] .avatar {
+            border-color: rgba(145, 70, 255, 0.3);
+            box-shadow: 
+                0 4px 12px rgba(145, 70, 255, 0.15),
+                inset 0 1px 0 rgba(255, 255, 255, 0.8);
+        }
+
+        .message[data-platform="facebook"] {
+            border-left-color: #1877f2;
+        }
+
+        .message[data-platform="facebook"]::before {
+            background: linear-gradient(90deg, transparent, rgba(24, 119, 242, 0.3), transparent);
+        }
+
+        .message[data-platform="facebook"] .avatar {
+            border-color: rgba(24, 119, 242, 0.3);
+            box-shadow: 
+                0 4px 12px rgba(24, 119, 242, 0.15),
+                inset 0 1px 0 rgba(255, 255, 255, 0.8);
+        }
+
+        .message[data-platform="tiktok"] {
+            border-left-color: #ff0050;
+        }
+
+        .message[data-platform="tiktok"]::before {
+            background: linear-gradient(90deg, transparent, rgba(255, 0, 80, 0.3), transparent);
+        }
+
+        .message[data-platform="tiktok"] .avatar {
+            border-color: rgba(255, 0, 80, 0.3);
+            box-shadow: 
+                0 4px 12px rgba(255, 0, 80, 0.15),
+                inset 0 1px 0 rgba(255, 255, 255, 0.8);
+        }
+
+        .message[data-platform="kick"] {
+            border-left-color: #53fc18;
+        }
+
+        .message[data-platform="kick"]::before {
+            background: linear-gradient(90deg, transparent, rgba(83, 252, 24, 0.3), transparent);
+        }
+
+        .message[data-platform="kick"] .avatar {
+            border-color: rgba(83, 252, 24, 0.3);
+            box-shadow: 
+                0 4px 12px rgba(83, 252, 24, 0.15),
+                inset 0 1px 0 rgba(255, 255, 255, 0.8);
+        }
+
+        .message[data-platform="x"],
+        .message[data-platform="twitter"] {
+            border-left-color: #1da1f2;
+        }
+
+        .message[data-platform="x"]::before,
+        .message[data-platform="twitter"]::before {
+            background: linear-gradient(90deg, transparent, rgba(29, 161, 242, 0.3), transparent);
+        }
+
+        .message[data-platform="x"] .avatar,
+        .message[data-platform="twitter"] .avatar {
+            border-color: rgba(29, 161, 242, 0.3);
+            box-shadow: 
+                0 4px 12px rgba(29, 161, 242, 0.15),
+                inset 0 1px 0 rgba(255, 255, 255, 0.8);
+        }
+
+        /* Hide empty elements */
+        .badges:empty,
+        .donation-info:empty {
+            display: none;
+        }
+
+        /* RESPONSIVE */
+        @media (max-width: 600px) {
+            .message {
+                padding: 16px 20px;
+                gap: 12px;
+            }
+            
+            .avatar {
+                width: 48px;
+                height: 48px;
+            }
+            
+            .username {
+                font-size: 16px;
+            }
+            
+            .text {
+                font-size: 15px;
+            }
+
+            #container {
+                max-width: 90%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div id="container">
+        <div id="output"></div>
+    </div>
+
+    <script src="https://socialstream.ninja/tts.js"></script>
+    <script>
+        // Configuration
+        const urlParams = new URLSearchParams(window.location.search);
+        const roomID = urlParams.get('session') || urlParams.get('room') || urlParams.get('roomid') || 'TESTROOM';
+        const password = urlParams.get('password') || urlParams.get('pass') || urlParams.get('pw') || "false";
+        const showtime = parseInt(urlParams.get('showtime') || urlParams.get('timer') || '8000'); // 8 seconds default
+        const pseudodock = urlParams.has('autoshow');
+        
+        // State
+        let messageTimeout = null;
+        let currentMessage = null;
+
+        // Create VDO.Ninja iframe
+        function createIframe() {
+            var iframe = document.createElement("iframe");
+
+            if (pseudodock) {
+                iframe.src = "https://vdo.socialstream.ninja/?ln&salt=vdo.ninja&password=" + password + "&push&notmobile&label=dock&vd=0&ad=0&novideo&noaudio&autostart&cleanoutput&room=" + roomID;
+            } else {
+                iframe.src = "https://vdo.socialstream.ninja/?ln&password=" + password + "&notmobile&salt=vdo.ninja&label=overlay&exclude=" + roomID + "&scene&novideo&noaudio&cleanoutput&room=" + roomID;
+            }
+            
+            iframe.style.width = "0px";
+            iframe.style.height = "0px";
+            iframe.style.position = "fixed";
+            iframe.style.left = "-100px";
+            iframe.style.top = "-100px";
+            iframe.id = "frame1";
+            iframe.allow = "midi;geolocation;microphone;";
+            document.body.appendChild(iframe);
+
+            var eventMethod = window.addEventListener ? "addEventListener" : "attachEvent";
+            var eventer = window[eventMethod];
+            var messageEvent = eventMethod === "attachEvent" ? "onmessage" : "message";
+
+            eventer(messageEvent, function (e) {
+                if (e.source != iframe.contentWindow) {
+                    return;
+                }
+                
+                if ("dataReceived" in e.data) {
+                    if ("overlayNinja" in e.data.dataReceived) {
+                        if (e.data.dataReceived.overlayNinja && "response" in e.data.dataReceived.overlayNinja) {
+                            return;
+                        } else {
+                            if (pseudodock && e.data.dataReceived.overlayNinja && !e.data.dataReceived.overlayNinja.contents) {
+                                processData({ contents: e.data.dataReceived.overlayNinja });
+                            } else {
+                                processData({ contents: e.data.dataReceived.overlayNinja });
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        // Process incoming messages
+        function processData(data) {
+            if (!data || data === false) {
+                hideMessage();
+                return;
+            }
+            
+            if (data.contents === false) {
+                hideMessage();
+                return;
+            }
+            
+            if (data && data.contents) {
+                showMessage(data.contents);
+            } 
+            else if (data && "content" in data) {
+                if (data.content) {
+                    processData({ contents: data.content });
+                } else {
+                    hideMessage();
+                }
+            }
+            else if (data.action && "value" in data && data.action == "content") {
+                if (data.value) {
+                    try {
+                        const parsed = JSON.parse(data.value);
+                        if (parsed && "chatmessage" in parsed) {
+                            showMessage(parsed);
+                        }
+                    } catch (e) {
+                        console.error("Error parsing value:", e);
+                    }
+                } else {
+                    hideMessage();
+                }
+            }
+            else if (data && "chatmessage" in data) {
+                showMessage(data);
+            }
+        }
+
+        // Display message with bounce animation
+        function showMessage(content) {
+            if (!content.chatmessage && !content.chatname) return;
+
+            hideMessage(() => {
+                const wrapper = document.createElement('div');
+                wrapper.className = 'message-wrapper';
+                
+                const message = document.createElement('div');
+                message.className = 'message';
+
+                // Set platform attribute for styling
+                if (content.type) {
+                    message.setAttribute('data-platform', content.type);
+                }
+
+                // Avatar
+                if (content.chatimg) {
+                    const avatar = document.createElement('img');
+                    avatar.className = 'avatar';
+                    avatar.src = content.chatimg;
+                    avatar.onerror = () => {
+                        avatar.src = 'https://socialstream.ninja/sources/images/unknown.png';
+                    };
+                    message.appendChild(avatar);
+                }
+
+                // Content wrapper
+                const contentDiv = document.createElement('div');
+                contentDiv.className = 'message-content';
+
+                // Username and badges
+                const header = document.createElement('div');
+                header.className = 'username';
+                
+                if (content.chatname) {
+                    const name = document.createElement('span');
+                    name.innerHTML = content.chatname;
+                    if (content.nameColor) {
+                        // Adjust dark colors to be visible on white background
+                        const rgb = hexToRgb(content.nameColor);
+                        if (rgb) {
+                            const brightness = (rgb.r * 299 + rgb.g * 587 + rgb.b * 114) / 1000;
+                            name.style.color = brightness > 150 ? '#111111' : content.nameColor;
+                        } else {
+                            name.style.color = '#111111';
+                        }
+                    } else {
+                        name.style.color = '#111111';
+                    }
+                    header.appendChild(name);
+                }
+
+                // Source icon
+                if (content.type) {
+                    const sourceIcon = document.createElement('img');
+                    sourceIcon.className = 'source-icon';
+                    sourceIcon.src = `https://socialstream.ninja/sources/images/${content.type}.png`;
+                    sourceIcon.onerror = () => { sourceIcon.style.display = 'none'; };
+                    header.appendChild(sourceIcon);
+                }
+
+                // Badges
+                if (content.chatbadges && Array.isArray(content.chatbadges)) {
+                    const badges = document.createElement('div');
+                    badges.className = 'badges';
+                    content.chatbadges.forEach(badge => {
+                        if (typeof badge === 'string') {
+                            const img = document.createElement('img');
+                            img.className = 'badge';
+                            img.src = badge;
+                            badges.appendChild(img);
+                        } else if (badge.src) {
+                            const img = document.createElement('img');
+                            img.className = 'badge';
+                            img.src = badge.src;
+                            badges.appendChild(img);
+                        } else if (badge.type === 'svg' && badge.html) {
+                            const span = document.createElement('span');
+                            span.className = 'badge svg';
+                            span.innerHTML = badge.html;
+                            badges.appendChild(span);
+                        }
+                    });
+                    header.appendChild(badges);
+                }
+
+                contentDiv.appendChild(header);
+
+                // Message text
+                if (content.chatmessage) {
+                    const text = document.createElement('div');
+                    text.className = 'text';
+                    text.innerHTML = content.chatmessage;
+                    if (content.textColor) {
+                        // Ensure text is readable on white
+                        const rgb = hexToRgb(content.textColor);
+                        if (rgb) {
+                            const brightness = (rgb.r * 299 + rgb.g * 587 + rgb.b * 114) / 1000;
+                            text.style.color = brightness > 180 ? '#333333' : content.textColor;
+                        } else {
+                            text.style.color = '#333333';
+                        }
+                    } else {
+                        text.style.color = '#333333';
+                    }
+                    contentDiv.appendChild(text);
+                }
+
+                // Donation/Membership info
+                if (content.hasDonation || content.membership) {
+                    const donationDiv = document.createElement('div');
+                    donationDiv.className = 'donation-info';
+                    
+                    if (content.hasDonation) {
+                        donationDiv.textContent = content.title ? 
+                            `${content.title}: ${content.hasDonation}` : 
+                            content.hasDonation;
+                    } else if (content.membership) {
+                        donationDiv.textContent = typeof content.membership === 'string' ? 
+                            content.membership : 'Member';
+                    }
+                    
+                    contentDiv.appendChild(donationDiv);
+                }
+
+                // Content image
+                if (content.contentimg) {
+                    const img = document.createElement('img');
+                    img.className = 'content-image';
+                    img.src = content.contentimg;
+                    img.onerror = () => { img.style.display = 'none'; };
+                    contentDiv.appendChild(img);
+                }
+
+                message.appendChild(contentDiv);
+                wrapper.appendChild(message);
+                
+                const output = document.getElementById('output');
+                output.innerHTML = '';
+                output.appendChild(wrapper);
+
+                // Trigger bounce animation
+                requestAnimationFrame(() => {
+                    wrapper.classList.add('show');
+                });
+
+                currentMessage = wrapper;
+
+                // TTS support
+                if (window.initTTS && urlParams.has('tts')) {
+                    const ttsText = content.chatmessage ? 
+                        content.chatmessage.replace(/<[^>]*>/g, '') : '';
+                    if (ttsText) {
+                        window.speak(content.chatname + ' says ' + ttsText);
+                    }
+                }
+
+                // Auto-hide
+                if (messageTimeout) clearTimeout(messageTimeout);
+                messageTimeout = setTimeout(() => {
+                    hideMessage();
+                }, showtime);
+            });
+        }
+
+        // Helper function to convert hex to RGB
+        function hexToRgb(hex) {
+            if (!hex) return null;
+            // Remove # if present
+            hex = hex.replace(/^#/, '');
+            
+            // Parse r, g, b values
+            let r, g, b;
+            if (hex.length === 3) {
+                r = parseInt(hex.charAt(0) + hex.charAt(0), 16);
+                g = parseInt(hex.charAt(1) + hex.charAt(1), 16);
+                b = parseInt(hex.charAt(2) + hex.charAt(2), 16);
+            } else if (hex.length === 6) {
+                r = parseInt(hex.substring(0, 2), 16);
+                g = parseInt(hex.substring(2, 4), 16);
+                b = parseInt(hex.substring(4, 6), 16);
+            } else {
+                return null;
+            }
+            
+            return { r, g, b };
+        }
+
+        // Hide message
+        function hideMessage(callback) {
+            if (messageTimeout) {
+                clearTimeout(messageTimeout);
+                messageTimeout = null;
+            }
+
+            if (currentMessage) {
+                currentMessage.classList.remove('show');
+                currentMessage.classList.add('hide');
+                setTimeout(() => {
+                    if (currentMessage && currentMessage.parentNode) {
+                        currentMessage.parentNode.removeChild(currentMessage);
+                    }
+                    currentMessage = null;
+                    if (callback) callback();
+                }, 500);
+            } else if (callback) {
+                callback();
+            }
+        }
+
+        // Initialize TTS
+        if (urlParams.has('tts') && window.initTTS) {
+            window.initTTS({
+                lang: urlParams.get('tts') || urlParams.get('lang') || 'en-US',
+                pitch: parseFloat(urlParams.get('pitch') || '1'),
+                rate: parseFloat(urlParams.get('rate') || '1'),
+                voice: urlParams.get('voice') || null
+            });
+        }
+
+        // Initialize
+        createIframe();
+    </script>
+</body>
+</html>
