@@ -56,7 +56,7 @@
         background: rgba(0, 0, 0, 0.5);
     }
 
-    /* CHAT NORMAL (PUTIH) - DEFAULT */
+    /* CHAT NORMAL (PUTIH) */
     .comment {
         display: flex;
         align-items: flex-start;
@@ -73,26 +73,9 @@
         transform: translateX(-20px);
         animation: slideIn 0.5s cubic-bezier(0.22, 0.61, 0.36, 1) forwards;
         transition: all 0.3s ease;
-        position: relative;
     }
 
-    /* RESET FORCE untuk semua chat - Pastikan tidak ada warisan style kuning */
-    .comment:not(.latest-chat) {
-        background: #FFFFFF !important;
-        border: 1px solid rgba(0, 0, 0, 0.08) !important;
-        box-shadow: 
-            0 4px 20px rgba(0, 0, 0, 0.08),
-            0 1px 3px rgba(0, 0, 0, 0.05),
-            inset 0 1px 0 rgba(255, 255, 255, 0.8) !important;
-    }
-
-    /* Hapus semua efek khusus untuk chat non-latest */
-    .comment:not(.latest-chat)::before,
-    .comment:not(.latest-chat)::after {
-        display: none !important;
-    }
-
-    /* CHAT TERBARU (KUNING) - HANYA SATU YANG INI */
+    /* CHAT TERBARU (KUNING) - TAMPIL DI BAWAH */
     .comment.latest-chat {
         background: linear-gradient(135deg, #FFF9C4, #FFF59D) !important;
         border: 2px solid #FFD600 !important;
@@ -104,7 +87,7 @@
         z-index: 10;
     }
 
-    /* Efek glow hanya untuk chat terbaru */
+    /* Efek glow untuk chat terbaru */
     .comment.latest-chat::before {
         content: '';
         position: absolute;
@@ -119,7 +102,7 @@
         animation: pulseGlow 2s infinite;
     }
 
-    /* Indikator "NOW REPLYING" hanya untuk chat terbaru */
+    /* Indikator "NOW REPLYING" */
     .comment.latest-chat::after {
         content: '🎤 NOW REPLYING';
         position: absolute;
@@ -188,16 +171,9 @@
 
     /* Avatar khusus untuk chat terbaru */
     .comment.latest-chat .avatar {
-        border: 2px solid #FFD600 !important;
-        box-shadow: 0 2px 12px rgba(255, 214, 0, 0.3) !important;
+        border: 2px solid #FFD600;
+        box-shadow: 0 2px 12px rgba(255, 214, 0, 0.3);
         animation: avatarPulse 2s infinite;
-    }
-
-    /* Avatar normal untuk chat non-latest */
-    .comment:not(.latest-chat) .avatar {
-        border: 2px solid rgba(0, 0, 0, 0.1) !important;
-        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05) !important;
-        animation: none !important;
     }
 
     @keyframes avatarPulse {
@@ -219,19 +195,18 @@
         flex-wrap: wrap;
     }
 
-    /* Username - NORMAL */
+    /* Username - warna khusus untuk chat terbaru */
     .comment:not(.latest-chat) .username {
-        font-weight: 600 !important;
-        font-size: 16px !important;
-        color: #111111 !important;
+        font-weight: 600;
+        font-size: 16px;
+        color: #111111;
         line-height: 1.3;
     }
 
-    /* Username - CHAT TERBARU */
     .comment.latest-chat .username {
-        font-weight: 700 !important;
-        font-size: 17px !important;
-        color: #5D4037 !important;
+        font-weight: 700;
+        font-size: 17px;
+        color: #5D4037 !important; /* Coklat tua untuk kontras */
         line-height: 1.3;
         text-shadow: 0 1px 2px rgba(255, 255, 255, 0.5);
     }
@@ -248,62 +223,56 @@
         border-radius: 3px;
     }
 
-    /* Timestamp - NORMAL */
+    /* Timestamp */
     .comment:not(.latest-chat) .timestamp {
-        font-size: 12px !important;
-        color: #666666 !important;
-        font-weight: 400 !important;
+        font-size: 12px;
+        color: #666666;
+        font-weight: 400;
         margin-top: 2px;
         opacity: 0.8;
-        background: transparent !important;
-        padding: 0 !important;
-        display: block !important;
     }
 
-    /* Timestamp - CHAT TERBARU */
     .comment.latest-chat .timestamp {
-        font-size: 12px !important;
+        font-size: 12px;
         color: #8D6E63 !important;
-        font-weight: 600 !important;
+        font-weight: 600;
         margin-top: 2px;
-        background: rgba(255, 255, 255, 0.5) !important;
-        display: inline-block !important;
-        padding: 2px 8px !important;
-        border-radius: 10px !important;
+        background: rgba(255, 255, 255, 0.5);
+        display: inline-block;
+        padding: 2px 8px;
+        border-radius: 10px;
     }
 
-    /* Message text - NORMAL */
+    /* Message text */
     .comment:not(.latest-chat) .message {
-        font-weight: 400 !important;
-        font-size: 15px !important;
+        font-weight: 400;
+        font-size: 15px;
         line-height: 1.5;
-        color: #222222 !important;
+        color: #222222;
         word-wrap: break-word;
         margin-top: 4px;
-        text-shadow: none !important;
     }
 
-    /* Message text - CHAT TERBARU */
     .comment.latest-chat .message {
-        font-weight: 500 !important;
-        font-size: 16px !important;
+        font-weight: 500;
+        font-size: 16px;
         line-height: 1.5;
-        color: #5D4037 !important;
+        color: #5D4037 !important; /* Coklat tua untuk kontras */
         word-wrap: break-word;
         margin-top: 4px;
         text-shadow: 0 1px 2px rgba(255, 255, 255, 0.5);
     }
 
-    /* Platform colors untuk chat NORMAL */
-    .comment:not(.latest-chat).youtube { border-left: 4px solid #FF0000; }
-    .comment:not(.latest-chat).twitch { border-left: 4px solid #9146FF; }
-    .comment:not(.latest-chat).facebook { border-left: 4px solid #1877F2; }
-    .comment:not(.latest-chat).tiktok { border-left: 4px solid #FF0050; }
-    .comment:not(.latest-chat).kick { border-left: 4px solid #53FC18; }
-    .comment:not(.latest-chat).twitter,
-    .comment:not(.latest-chat).x { border-left: 4px solid #1DA1F2; }
+    /* Platform colors tetap tapi lebih subtle untuk chat terbaru */
+    .comment.youtube { border-left: 4px solid #FF0000; }
+    .comment.twitch { border-left: 4px solid #9146FF; }
+    .comment.facebook { border-left: 4px solid #1877F2; }
+    .comment.tiktok { border-left: 4px solid #FF0050; }
+    .comment.kick { border-left: 4px solid #53FC18; }
+    .comment.twitter,
+    .comment.x { border-left: 4px solid #1DA1F2; }
 
-    /* Platform colors untuk chat TERBARU */
+    /* Platform colors untuk chat terbaru */
     .comment.latest-chat.youtube { border-left: 4px solid #D32F2F !important; }
     .comment.latest-chat.twitch { border-left: 4px solid #7B1FA2 !important; }
     .comment.latest-chat.facebook { border-left: 4px solid #1565C0 !important; }
@@ -312,32 +281,24 @@
     .comment.latest-chat.twitter,
     .comment.latest-chat.x { border-left: 4px solid #0D47A1 !important; }
 
-    /* Donation info - NORMAL */
-    .comment:not(.latest-chat) .donation-info {
+    /* Donation info */
+    .donation-info {
         display: inline-block;
         padding: 4px 10px;
-        background: linear-gradient(135deg, #f8f9fa, #e9ecef) !important;
+        background: linear-gradient(135deg, #f8f9fa, #e9ecef);
         border-radius: 8px;
         font-size: 12px;
         font-weight: 600;
-        color: #495057 !important;
+        color: #495057;
         margin-top: 8px;
-        border: 1px solid rgba(0, 0, 0, 0.08) !important;
-        box-shadow: none !important;
+        border: 1px solid rgba(0, 0, 0, 0.08);
     }
 
-    /* Donation info - TERBARU */
     .comment.latest-chat .donation-info {
-        display: inline-block !important;
-        padding: 4px 10px !important;
-        background: linear-gradient(135deg, #FFECB3, #FFD54F) !important;
-        border-radius: 8px !important;
-        font-size: 12px !important;
-        font-weight: 600 !important;
-        color: #5D4037 !important;
-        margin-top: 8px !important;
-        border: 1px solid #FFB300 !important;
-        box-shadow: 0 2px 8px rgba(255, 179, 0, 0.2) !important;
+        background: linear-gradient(135deg, #FFECB3, #FFD54F);
+        color: #5D4037;
+        border: 1px solid #FFB300;
+        box-shadow: 0 2px 8px rgba(255, 179, 0, 0.2);
     }
 
     /* Scroll indicator */
@@ -668,27 +629,12 @@
     }
     
     function renderChatElement(chatData, index, isNew = false, isLatest = false) {
-        // HAPUS SEMUA CLASS latest-chat SEBELUMNYA
-        if (isLatest) {
-            document.querySelectorAll('.comment.latest-chat').forEach(el => {
-                el.classList.remove('latest-chat');
-            });
-        }
-        
         const commentEl = document.createElement('div');
         
         // Set class berdasarkan status
         let className = `comment ${chatData.type || ''}`;
         if (isNew) className += ' new-chat';
-        if (isLatest) {
-            className += ' latest-chat';
-            // Pastikan hanya satu yang punya class ini
-            document.querySelectorAll('.comment.latest-chat').forEach(el => {
-                if (el !== commentEl) {
-                    el.classList.remove('latest-chat');
-                }
-            });
-        }
+        if (isLatest) className += ' latest-chat';
         
         commentEl.className = className;
         commentEl.dataset.id = chatData.id;
@@ -735,9 +681,10 @@
             donationHtml = `<div class="donation-info">${chatData.membership}</div>`;
         }
         
-        // Warna teks
+        // Warna teks khusus untuk chat terbaru
         let textColor, nameColor;
         if (isLatest) {
+            // Untuk chat terbaru (kuning), gunakan warna gelap untuk kontras
             textColor = '#5D4037';
             nameColor = '#5D4037';
         } else {
@@ -811,13 +758,13 @@
             return;
         }
         
-        // HAPUS SEMUA HIGHLIGHT SEBELUMNYA
-        document.querySelectorAll('.comment.latest-chat').forEach(chat => {
-            chat.classList.remove('latest-chat');
-        });
-        
-        // Hapus elemen yang sudah ada (untuk re-render)
-        const existingChats = document.querySelectorAll('.comment');
+        // Hapus highlight dari chat sebelumnya
+        if (latestChatIndex >= 0) {
+            const prevLatestChat = document.querySelector(`.comment[data-index="${latestChatIndex}"]`);
+            if (prevLatestChat) {
+                prevLatestChat.classList.remove('latest-chat');
+            }
+        }
         
         // Add to array
         allChats.push(enrichedChat);
@@ -827,16 +774,8 @@
         
         // Limit array size
         if (allChats.length > maxComments) {
-            const removedCount = allChats.length - maxComments;
             allChats = allChats.slice(-maxComments);
             latestChatIndex = allChats.length - 1;
-            
-            // Hapus elemen DOM yang dipotong
-            document.querySelectorAll('.comment').forEach((el, index) => {
-                if (index < removedCount) {
-                    el.remove();
-                }
-            });
         }
         
         // Save to storage
@@ -845,51 +784,35 @@
         // Update chat count
         updateChatCount();
         
-        // HAPUS SEMUA CHAT DAN RENDER ULANG UNTUK MEMASTIKAN STYLE BENAR
-        container.innerHTML = '';
+        // Render new chat sebagai latest
+        renderChatElement(enrichedChat, latestChatIndex, true, true);
         
-        // Render ulang semua chat
-        allChats.forEach((chat, index) => {
-            const isLatest = index === latestChatIndex;
-            renderChatElement(chat, index, index === allChats.length - 1, isLatest);
-        });
-        
-        if (debug) {
-            console.log(`New chat added and marked as latest: ${chatData.chatname}`);
-            console.log(`Latest chat index: ${latestChatIndex}`);
-            console.log(`Total chats with latest-chat class: ${document.querySelectorAll('.comment.latest-chat').length}`);
-        }
+        if (debug) console.log(`New chat added and marked as latest: ${chatData.chatname}`);
     }
     
     // ========== CONTROL FUNCTIONS ==========
     
     function markAsReplied() {
-        // Hapus highlight dari semua chat
-        document.querySelectorAll('.comment.latest-chat').forEach(chat => {
-            chat.classList.remove('latest-chat');
-        });
-        
-        // Cari chat sebelumnya untuk di-highlight
-        if (latestChatIndex > 0) {
-            latestChatIndex--;
-            
-            // Update semua chat untuk memastikan hanya satu yang di-highlight
-            document.querySelectorAll('.comment').forEach((chat, index) => {
-                if (index === latestChatIndex) {
-                    chat.classList.add('latest-chat');
-                    chat.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        // Hapus highlight dari chat terbaru
+        if (latestChatIndex >= 0) {
+            const latestChat = document.querySelector(`.comment[data-index="${latestChatIndex}"]`);
+            if (latestChat) {
+                latestChat.classList.remove('latest-chat');
+                
+                // Cari chat sebelumnya untuk di-highlight
+                if (latestChatIndex > 0) {
+                    latestChatIndex--;
+                    const newLatestChat = document.querySelector(`.comment[data-index="${latestChatIndex}"]`);
+                    if (newLatestChat) {
+                        newLatestChat.classList.add('latest-chat');
+                        newLatestChat.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    }
                 } else {
-                    chat.classList.remove('latest-chat');
+                    latestChatIndex = -1;
                 }
-            });
-            
-            if (debug) {
-                console.log('Chat marked as replied, moving to previous chat');
-                console.log(`New latest chat index: ${latestChatIndex}`);
+                
+                if (debug) console.log('Chat marked as replied, moving to next chat');
             }
-        } else {
-            latestChatIndex = -1;
-            if (debug) console.log('No more chats to highlight');
         }
     }
     
@@ -938,7 +861,7 @@
             // Test chat untuk debug
             setTimeout(() => {
                 addNewChat({
-                    chatname: 'Test User 1',
+                    chatname: 'Test User',
                     chatmessage: 'Ini adalah chat pertama yang akan di-highlight! 🎯',
                     chatimg: 'https://socialstream.ninja/sources/images/unknown.png',
                     type: 'youtube'
@@ -946,20 +869,11 @@
                 
                 setTimeout(() => {
                     addNewChat({
-                        chatname: 'Test User 2',
+                        chatname: 'Another User',
                         chatmessage: 'Chat kedua ini akan menggantikan highlight! ✨',
                         chatimg: 'https://socialstream.ninja/sources/images/unknown.png',
                         type: 'twitch'
                     });
-                    
-                    setTimeout(() => {
-                        addNewChat({
-                            chatname: 'Test User 3',
-                            chatmessage: 'Chat ketiga akan menjadi yang terbaru! 🚀',
-                            chatimg: 'https://socialstream.ninja/sources/images/unknown.png',
-                            type: 'facebook'
-                        });
-                    }, 2000);
                 }, 2000);
             }, 1000);
         }
@@ -1012,4 +926,65 @@
         container.innerHTML = `
             <div class="empty-state">
                 <div class="icon">📭</div>
-                <div>${message}</div
+                <div>${message}</div>
+            </div>
+        `;
+    }
+    
+    function showError(message) {
+        container.innerHTML = `
+            <div class="empty-state">
+                <div class="icon">⚠️</div>
+                <div>${message}</div>
+            </div>
+        `;
+    }
+    
+    function getReadableTextColor(hexColor) {
+        if (!hexColor) return null;
+        try {
+            const hex = hexColor.replace('#', '');
+            if (hex.length !== 6 && hex.length !== 3) return null;
+            
+            let r, g, b;
+            if (hex.length === 3) {
+                r = parseInt(hex[0] + hex[0], 16);
+                g = parseInt(hex[1] + hex[1], 16);
+                b = parseInt(hex[2] + hex[2], 16);
+            } else {
+                r = parseInt(hex.substr(0, 2), 16);
+                g = parseInt(hex.substr(2, 2), 16);
+                b = parseInt(hex.substr(4, 2), 16);
+            }
+            
+            const brightness = (r * 299 + g * 587 + b * 114) / 1000;
+            return brightness > 180 ? '#222222' : hexColor;
+        } catch (e) {
+            return '#222222';
+        }
+    }
+    
+    function formatMessage(message) {
+        if (!message) return '';
+        return escapeHtml(message)
+            .replace(/\n/g, '<br>')
+            .replace(/&lt;3/g, '❤️')
+            .replace(/&lt;/g, '<')
+            .replace(/&gt;/g, '>');
+    }
+    
+    function escapeHtml(text) {
+        const div = document.createElement('div');
+        div.textContent = text;
+        return div.innerHTML;
+    }
+    
+    // ========== GLOBAL FUNCTIONS ==========
+    window.scrollToBottom = scrollToBottom;
+    window.clearAllChats = clearAllChats;
+    window.markAsReplied = markAsReplied;
+    window.toggleControlPanel = toggleControlPanel;
+
+</script>
+</body>
+</html>
