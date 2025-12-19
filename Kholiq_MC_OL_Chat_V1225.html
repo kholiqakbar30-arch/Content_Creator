@@ -816,9 +816,6 @@
             chat.classList.remove('latest-chat');
         });
         
-        // Hapus elemen yang sudah ada (untuk re-render)
-        const existingChats = document.querySelectorAll('.comment');
-        
         // Add to array
         allChats.push(enrichedChat);
         
@@ -837,6 +834,11 @@
                     el.remove();
                 }
             });
+            
+            // Update index semua chat
+            document.querySelectorAll('.comment').forEach((el, index) => {
+                el.dataset.index = index;
+            });
         }
         
         // Save to storage
@@ -845,14 +847,8 @@
         // Update chat count
         updateChatCount();
         
-        // HAPUS SEMUA CHAT DAN RENDER ULANG UNTUK MEMASTIKAN STYLE BENAR
-        container.innerHTML = '';
-        
-        // Render ulang semua chat
-        allChats.forEach((chat, index) => {
-            const isLatest = index === latestChatIndex;
-            renderChatElement(chat, index, index === allChats.length - 1, isLatest);
-        });
+        // Render ulang semua chat untuk memastikan style benar
+        renderAllChats();
         
         if (debug) {
             console.log(`New chat added and marked as latest: ${chatData.chatname}`);
@@ -873,15 +869,8 @@
         if (latestChatIndex > 0) {
             latestChatIndex--;
             
-            // Update semua chat untuk memastikan hanya satu yang di-highlight
-            document.querySelectorAll('.comment').forEach((chat, index) => {
-                if (index === latestChatIndex) {
-                    chat.classList.add('latest-chat');
-                    chat.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                } else {
-                    chat.classList.remove('latest-chat');
-                }
-            });
+            // Render ulang untuk update highlight
+            renderAllChats();
             
             if (debug) {
                 console.log('Chat marked as replied, moving to previous chat');
@@ -889,6 +878,8 @@
             }
         } else {
             latestChatIndex = -1;
+            // Render ulang untuk menghapus semua highlight
+            renderAllChats();
             if (debug) console.log('No more chats to highlight');
         }
     }
@@ -1012,4 +1003,65 @@
         container.innerHTML = `
             <div class="empty-state">
                 <div class="icon">📭</div>
-                <div>${message}</div
+                <div>${message}</div>
+            </div>
+        `;
+    }
+    
+    function showError(message) {
+        container.innerHTML = `
+            <div class="empty-state">
+                <div class="icon">⚠️</div>
+                <div>${message}</div>
+            </div>
+        `;
+    }
+    
+    function getReadableTextColor(hexColor) {
+        if (!hexColor) return null;
+        try {
+            const hex = hexColor.replace('#', '');
+            if (hex.length !== 6 && hex.length !== 3) return null;
+            
+            let r, g, b;
+            if (hex.length === 3) {
+                r = parseInt(hex[0] + hex[0], 16);
+                g = parseInt(hex[1] + hex[1], 16);
+                b = parseInt(hex[2] + hex[2], 16);
+            } else {
+                r = parseInt(hex.substr(0, 2), 16);
+                g = parseInt(hex.substr(2, 2), 16);
+                b = parseInt(hex.substr(4, 2), 16);
+            }
+            
+            const brightness = (r * 299 + g * 587 + b * 114) / 1000;
+            return brightness > 180 ? '#222222' : hexColor;
+        } catch (e) {
+            return '#222222';
+        }
+    }
+    
+    function formatMessage(message) {
+        if (!message) return '';
+        return escapeHtml(message)
+            .replace(/\n/g, '<br>')
+            .replace(/&lt;3/g, '❤️')
+            .replace(/&lt;/g, '<')
+            .replace(/&gt;/g, '>');
+    }
+    
+    function escapeHtml(text) {
+        const div = document.createElement('div');
+        div.textContent = text;
+        return div.innerHTML;
+    }
+    
+    // ========== GLOBAL FUNCTIONS ==========
+    window.scrollToBottom = scrollToBottom;
+    window.clearAllChats = clearAllChats;
+    window.markAsReplied = markAsReplied;
+    window.toggleControlPanel = toggleControlPanel;
+
+</script>
+</body>
+</html>
